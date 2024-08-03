@@ -1,33 +1,54 @@
-import React, { useState } from 'react';
-import {
-  Container,
-  TextField,
-  Button,
-  Typography,
-  Box,
-  CircularProgress,
-  Link
-} from '@mui/material';
+import { useState } from 'react';
+import { Container, TextField, Button, Typography, Box, CircularProgress, Link } from '@mui/material';
 import { toast } from "react-toastify";
+import {useForgotPasswordMutation} from '../slices/userApiSlice'
+import { ErrorResponseDisplay } from '../datatypes.ts/userRes';
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [emailError, setEmailError] = useState<string>('');
+
+  const [forgotPass,{isLoading}]=useForgotPasswordMutation()
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
+    setEmailError(''); // Clear error when the user starts typing
+  };
+
+  const validateEmail = (email: string): boolean => {
+    let emailError = '';
+
+    if (!email.trim()) {
+      emailError = 'Email is required';
+    } else if (!/[a-z0-9]+@[a-z]+\.[a-z]{2,3}/.test(email)) {
+      emailError = 'Email is invalid';
+    }
+
+    setEmailError(emailError);
+    return !emailError;
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
+    if (!validateEmail(email)) {
+      return;
+    }
 
+    setLoading(true);
+    console.log(email);
+    
     try {
       // Simulate API call for sending password reset email
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const res=await forgotPass({email}).unwrap();
+      console.log(res,'email',email);
+      
       toast.success('Password reset link sent to your email');
     } catch (error) {
-      toast.error('Error sending password reset link');
+      
+      const errorData = (error as { data: ErrorResponseDisplay }).data;
+      
+      toast.error(errorData);
     } finally {
       setLoading(false);
     }
@@ -52,6 +73,8 @@ const ForgotPassword: React.FC = () => {
             onChange={handleEmailChange}
             margin="normal"
             required
+            error={Boolean(emailError)}
+            helperText={emailError}
           />
           <Box mt={3} position="relative">
             <Button
@@ -61,7 +84,7 @@ const ForgotPassword: React.FC = () => {
               fullWidth
               disabled={loading}
             >
-              {loading ? <CircularProgress size={24} /> : 'Send Reset Link'}
+              {loading || isLoading? <CircularProgress size={24} /> : 'Send Reset Link'}
             </Button>
           </Box>
         </form>

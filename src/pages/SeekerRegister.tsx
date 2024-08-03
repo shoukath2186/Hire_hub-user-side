@@ -76,7 +76,7 @@ const SeekerRegistrationForm: React.FC = () => {
       newErrors.phone = 'Phone number must be exactly 10 digits long.';
     }
 
-    if (!formData.password) {
+    if (!formData.password.trim()) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 8) {
       newErrors.password = 'Password must be at least 8 characters long';

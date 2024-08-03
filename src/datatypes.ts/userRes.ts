@@ -5,7 +5,7 @@ export interface ResponseType {
     email: string;
     phone: number;
     userRole: string;
-    
+    otp_verify:boolean
   }
   
  export  interface ErrorResponse {

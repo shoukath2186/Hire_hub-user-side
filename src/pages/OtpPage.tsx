@@ -9,6 +9,8 @@ import { useVerifyOtpMutation,useResendOtpMutation} from '../slices/userApiSlice
 
 
 import { ErrorResponseDisplay } from '../datatypes.ts/userRes';
+import { useDispatch} from 'react-redux';
+import { setCredentials } from '../slices/authSlice';
 
 // import { Response } from '../datatypes.ts/userRes';
 
@@ -28,21 +30,43 @@ const OTPRegisterForm: React.FC = () => {
 
   const [verifyOtp, { isLoading: isVerifying }] = useVerifyOtpMutation();
   const [resendOtp, { isLoading: isResending }] = useResendOtpMutation();
+  const resendTriggered = useRef(false);
+
 
   const navigate = useNavigate();
+  const dispatch=useDispatch();
+
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const userId: string = queryParams.get('Id') || '';
+
+  const resend: string = queryParams.get('resend') || '';
+   
 
   useEffect(() => {
-   // Save the timer value in localStorage whenever it changes
+    if (resend === 'success' && !resendTriggered.current) {
+      
+      handleResendOtp();
+      resendTriggered.current = true; 
+      console.log('OTP resend activated');
+    }
+  }, [resend]);
+ 
+
+  useEffect(() => {
+
    localStorage.setItem('timer', timer.toString());
 
-   // Start the timer countdown
    if (timer > 0) {
      const countdown = setInterval(() => setTimer((prev) => prev - 1), 1000);
      return () => clearInterval(countdown);
    } else {
-     localStorage.removeItem('timer'); // Remove timer when it reaches 0
+     localStorage.removeItem('timer'); 
    }
   }, [timer]);
+
+  
 
   const handleOtpChange = (index: number) => (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -66,31 +90,27 @@ const OTPRegisterForm: React.FC = () => {
     }
   };
 
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const userId: string = queryParams.get('Id') || '';
+  
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fullOtp = otp.join('');
     if (fullOtp.length === OTP_LENGTH) {
-      console.log('Submitted OTP:', fullOtp);
+      //console.log('Submitted OTP:', fullOtp);
 
 
       try {
-        const res = await verifyOtp({
+        const res= await verifyOtp({
           otp: fullOtp,
           email: userId
         }).unwrap();
 
-        console.log(res);
-
-        // if (res && res.data) { 
-        //   console.log('res Data:', res.data);
-        // }
-
-
-
+         //console.log(12345,res);
+          
+        
+         dispatch(setCredentials(res));
+          localStorage.removeItem('timer');
+           navigate('/')
       } catch (err) {
 
         if (err && typeof err === 'object' && 'data' in err) {
@@ -98,6 +118,7 @@ const OTPRegisterForm: React.FC = () => {
           console.log(errorData);
 
           if (typeof errorData === 'string' && errorData == 'Email does not exist.') {
+            setTimer(0)
             toast.error('OTP not found. Please resend the OTP.');
           }
           if (typeof errorData === 'string' && errorData == 'User does not exist.') {
@@ -127,7 +148,6 @@ const OTPRegisterForm: React.FC = () => {
 
 
   const handleResendOtp = async () => {
-    // Logic to resend OTP
     console.log('OTP resent');
 
     try {

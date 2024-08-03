@@ -2,61 +2,78 @@
 
 function Footer() {
   return (
-    <div className="bg-[#635745] text-gray-400 pt-5 mt-[70px]">
-      <div className="container mx-auto py-5 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
-          <div>
-            <h5 className="text-white mb-4">Company</h5>
-            <a className="block text-gray-400 hover:text-white" href="#">About Us</a>
-            <a className="block text-gray-400 hover:text-white" href="#">Contact Us</a>
-            <a className="block text-gray-400 hover:text-white" href="#">Our Services</a>
-            <a className="block text-gray-400 hover:text-white" href="#">Privacy Policy</a>
-            <a className="block text-gray-400 hover:text-white" href="#">Terms & Condition</a>
-          </div>
-          <div>
-            <h5 className="text-white mb-4">Quick Links</h5>
-            <a className="block text-gray-400 hover:text-white" href="#">About Us</a>
-            <a className="block text-gray-400 hover:text-white" href="#">Contact Us</a>
-            <a className="block text-gray-400 hover:text-white" href="#">Our Services</a>
-            <a className="block text-gray-400 hover:text-white" href="#">Privacy Policy</a>
-            <a className="block text-gray-400 hover:text-white" href="#">Terms & Condition</a>
-          </div>
-          <div>
-            <h5 className="text-white mb-4">Contact</h5>
-            <p className="mb-2"><i className="fa fa-map-marker-alt mr-3"></i>123 Street, New York, USA</p>
-            <p className="mb-2"><i className="fa fa-phone-alt mr-3"></i>+012 345 67890</p>
-            <p className="mb-2"><i className="fa fa-envelope mr-3"></i>info@example.com</p>
-            <div className="flex space-x-3 pt-2">
-              <a className="text-gray-400 hover:text-white" href="#"><i className="fab fa-twitter"></i></a>
-              <a className="text-gray-400 hover:text-white" href="#"><i className="fab fa-facebook-f"></i></a>
-              <a className="text-gray-400 hover:text-white" href="#"><i className="fab fa-youtube"></i></a>
-              <a className="text-gray-400 hover:text-white" href="#"><i className="fab fa-linkedin-in"></i></a>
-            </div>
-          </div>
-          <div>
-            <h5 className="text-white mb-4">Newsletter</h5>
-            <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
-            <div className="relative">
-              <input className="bg-gray-800 text-white w-full py-3 pl-4 pr-12 rounded" type="text" placeholder="Your email" />
-              <button className="bg-blue-600 text-white py-2 px-4 absolute right-0 top-0 mt-2 mr-2 rounded">SignUp</button>
-            </div>
-          </div>
+    <footer className="bg-gray-800 text-gray-300 pt-10 mt-[70px] mb-0">
+  <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      <div className="mb-8">
+        <h5 className="text-white text-lg font-semibold mb-4">Company</h5>
+        <ul className="space-y-2">
+          {['About Us', 'Contact Us', 'Our Services', 'Privacy Policy', 'Terms & Condition'].map((item) => (
+            <li key={item}>
+              <a className="hover:text-blue-400 transition duration-300" href="#">{item}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="mb-8">
+        <h5 className="text-white text-lg font-semibold mb-4">Quick Links</h5>
+        <ul className="space-y-2">
+          {['About Us', 'Contact Us', 'Our Services', 'Privacy Policy', 'Terms & Condition'].map((item) => (
+            <li key={item}>
+              <a className="hover:text-blue-400 transition duration-300" href="#">{item}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="mb-8">
+        <h5 className="text-white text-lg font-semibold mb-4">Contact</h5>
+        <ul className="space-y-2">
+          <li className="flex items-center"><i className="fas fa-map-marker-alt mr-3 text-blue-400"></i>123 Street, New York, USA</li>
+          <li className="flex items-center"><i className="fas fa-phone-alt mr-3 text-blue-400"></i>+012 345 67890</li>
+          <li className="flex items-center"><i className="fas fa-envelope mr-3 text-blue-400"></i>info@example.com</li>
+        </ul>
+        <div className="flex space-x-4 mt-4">
+          {['twitter', 'facebook-f', 'youtube', 'linkedin-in'].map((icon) => (
+            <a key={icon} className="text-gray-400 hover:text-blue-400 transition duration-300" href="#">
+              <i className={`fab fa-${icon} text-lg`}></i>
+            </a>
+          ))}
         </div>
       </div>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex flex-col sm:flex-row items-center justify-between">
-          <p className="text-center text-sm text-gray-400 sm:text-left">&copy; <a className="text-gray-400 border-b border-gray-600" href="#">Your Site Name</a>, All Rights Reserved.</p>
-          <div className="mt-4 sm:mt-0">
-            <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white">Home</a>
-              <a href="#" className="text-gray-400 hover:text-white">Cookies</a>
-              <a href="#" className="text-gray-400 hover:text-white">Help</a>
-              <a href="#" className="text-gray-400 hover:text-white">FAQs</a>
-            </div>
-          </div>
+      <div className="mb-8">
+        <h5 className="text-white text-lg font-semibold mb-4">Newsletter</h5>
+        <p className="mb-4">Stay updated with our latest news and offers.</p>
+        <form className="flex flex-col sm:flex-row">
+          <input 
+            className="bg-gray-700 text-white py-2 px-4 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-400 mb-2 sm:mb-0" 
+            type="email" 
+            placeholder="Your email" 
+          />
+          <button 
+            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-r-md transition duration-300"
+            type="submit"
+          >
+            Sign Up
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div className="border-t border-gray-700 mt-8 pt-8 pb-6">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col sm:flex-row items-center justify-between">
+        <p className="text-sm mb-4 sm:mb-0">
+          &copy; 2024 <a className="text-blue-400 hover:underline" href="/">HireHub</a>. All Rights Reserved.
+        </p>
+        <div className="flex space-x-4">
+          {['Home', 'Cookies', 'Help', 'FAQs'].map((item) => (
+            <a key={item} href="#" className="text-sm hover:text-blue-400 transition duration-300">{item}</a>
+          ))}
         </div>
       </div>
     </div>
+  </div>
+</footer> 
   );
 }
 
