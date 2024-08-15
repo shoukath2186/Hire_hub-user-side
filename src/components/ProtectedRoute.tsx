@@ -6,8 +6,10 @@ import { RootState } from '../store';
 
 const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
   const isAuthenticated = useSelector((state: RootState) => state.auth);
+  // console.log(12345,isAuthenticated);
+  
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated.userInfo){
     return <Navigate to="/login" replace />;
   }
 

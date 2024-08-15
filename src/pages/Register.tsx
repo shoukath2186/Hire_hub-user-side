@@ -9,7 +9,7 @@ function Register() {
   return (
     <>
     {registerPage=='register'?(
-      <div className="w-full flex flex-wrap justify-center mt-12">
+      <div className="w-full flex flex-wrap justify-center mt-12 mb-[70px]">
       <div className="min-w-[300px] w-full sm:w-[350px] bg-1-color m-4 sm:m-6 rounded-lg shadow-md border-[1px] border-gray-300">
         <div className="w-full flex items-center justify-center h-20 border-b border-gray-300">
           <h1 className="text-center text-2xl font-bold text-[#B08401]">Register as a Job Seeker</h1>

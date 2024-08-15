@@ -142,7 +142,7 @@ const SeekerRegistrationForm: React.FC = () => {
   };
 
   return (
-    <div className='w-[100%] '>
+    <div className='w-[100%] mb-[70px]'>
       <Container component="main" maxWidth="sm" >
         <Paper elevation={3} sx={{ mt: 8, p: 4 }}>
           <Typography component="h1" variant="h4" align="center" gutterBottom sx={{ mb: 2 }}>

@@ -7,7 +7,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AuthState } from '../datatypes.ts/IUserData';
 import { logout } from '../slices/authSlice';
 import { useLogoutMutation } from '../slices/userApiSlice';
-import { Link ,useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Box, Button, Typography, Modal } from '@mui/material';
+
 
 
 
@@ -15,8 +17,39 @@ const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const { userInfo } = useSelector((state: AuthState | any) => state.auth);
+  const [open, setOpen] = useState<boolean>(false);
+  const [activeItem, setActiveItem] = useState<string>('HOME');
 
   const dispatch = useDispatch();
+
+  const handleOpen = () => {
+
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+
+  const handleModal = async () => {
+
+    setOpen(false);
+    try {
+
+      await logoutServer({ userId: userInfo._id }).unwrap();
+
+      dispatch(logout())
+
+
+    } catch (error) {
+      console.log(2222, error);
+
+    }
+
+
+
+
+  };
 
   const navItems: string[] = ['HOME', 'POST', 'JOBS', 'ABOUT', 'CONTACT'];
 
@@ -42,48 +75,49 @@ const Navbar: React.FC = () => {
   async function handileProfile(clik: string) {
     toggleDropdown()
     if (clik == 'Logout') {
-      try {
-       
-        await logoutServer({ userId: userInfo._id }).unwrap();
 
-        dispatch(logout())
-
-
-      } catch (error) {
-        console.log(2222, error);
-
-      }
-
-
-
+      handleOpen()
+    }
+    if (clik == 'Profile') {
+      navigate('/profile')
     }
 
   }
 
-  const navigate=useNavigate()
- function handilNavbar(item:string){
-  if(item=='HOME'){
-    console.log('sucess');
-    navigate('/');
+  const navigate = useNavigate()
+
+
+  function handilNavbar(item: string) {
+
+    setActiveItem(item);
+    if (item == 'HOME') {
+      console.log('sucess');
+      navigate('/');
+    }
+    console.log(item);
+
   }
-  console.log(item);
-  
- }
 
 
 
 
 
 
-  const NavLink: React.FC<{ item: string; mobile?: boolean }> = ({ item, mobile }) => (
+  const NavLink: React.FC<{ item: string; mobile?: boolean,active: string; onItemClick: (item: string) => void; }> = ({ item, mobile ,active,onItemClick}) => (
 
-    <li onClick={()=>handilNavbar(item)}>
+    <li onClick={() => onItemClick(item)}>
+
       <a
         href="#"
         className={`${mobile
-          ? "block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-100"
-          : "text-gray-700 font-semibold text-base hover:text-blue-600 border-b-2 border-transparent hover:border-blue-600 pb-1"
-          } transition duration-300 ease-in-out`}
+            ? "block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-100"
+            : "text-base font-semibold border-b-2 pb-1"
+          } transition duration-300 ease-in-out ${active === item
+            ? mobile
+              ? "text-blue-600 bg-gray-100"
+              : "text-blue-600 border-blue-600"
+            : "text-gray-700 hover:text-blue-600 border-transparent hover:border-blue-600"
+          }`}
       >
         {item}
       </a>
@@ -107,11 +141,15 @@ const Navbar: React.FC = () => {
                 onClick={() => setIsOpenMenu(false)}
               />
             </div>
-            {['User Profile', 'Add New Post', 'Logout'].map((item) => (
+            {userInfo.user_role == 'employer' ? (['Profile', 'Add New Post', 'Create new Job', 'Logout'].map((item) => (
               <li key={item} onClick={() => handileProfile(item)} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
                 {item}
               </li>
-            ))}
+            ))) : (['Profile', 'Add New Post', 'Logout'].map((item) => (
+              <li key={item} onClick={() => handileProfile(item)} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
+                {item}
+              </li>
+            )))}
           </ul>
         </div>
       )}
@@ -128,13 +166,62 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="sticky z-10 top-0 w-full bg-white shadow-lg border-b-2 border-gray-200">
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="child-modal-title"
+        aria-describedby="child-modal-description"
+      >
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          bgcolor: 'background.paper',
+          boxShadow: 24,
+          p: 4,
+          borderRadius: '8px',
+          width: { xs: '90%', sm: '70%', md: '50%' }, // Responsive width
+          maxWidth: '500px', // Maximum width for larger screens
+          textAlign: 'center'
+        }}>
+          <Typography id="child-modal-title" variant="h6" component="h2" fontWeight="bold">
+            Logout Confirmation
+          </Typography>
+          <Typography id="child-modal-description" sx={{ mt: 2, mb: 3 }}>
+            Are you sure you want to log out?
+          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+            <Button
+              onClick={handleClose}
+              sx={{
+                bgcolor: 'green',
+                color: 'white',
+                '&:hover': { bgcolor: '#388e3c' },
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleModal}
+              sx={{
+                bgcolor: '#f44336', // Blue color for Submit button
+                color: 'white',
+                '&:hover': { bgcolor: '#d32f2f' }, // Darker blue on hover
+              }}
+            >
+              Submit
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <h1 className="text-blue-600 font-bold text-3xl">Hire<span className="text-yellow-600">Hub</span></h1>
 
           <div className="hidden md:block">
             <ul className="flex space-x-6">
-              {navItems.map((item) => <NavLink key={item} item={item} />)}
+              {navItems.map((item) => <NavLink key={item} item={item} active={activeItem} onItemClick={handilNavbar} />)}
             </ul>
           </div>
 
@@ -170,7 +257,7 @@ const Navbar: React.FC = () => {
       {isOpen && (
         <div className="md:hidden bg-white">
           <ul className="px-2 pt-2 pb-3 space-y-1">
-            {navItems.map((item) => <NavLink key={item} item={item} mobile />)}
+            {navItems.map((item) => <NavLink key={item} item={item} mobile active={activeItem} onItemClick={handilNavbar} />)}
           </ul>
           <div className="pt-4 pb-3 border-t border-gray-200">
             <div className="flex items-center justify-between px-5">

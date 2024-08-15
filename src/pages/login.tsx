@@ -130,12 +130,18 @@ function googleData(user:any){
       }
   })
   .then(async (res) => {
-      console.log(res.data);
-      const responce = await googleLogin(res.data).unwrap()
+      try {
+        const responce = await googleLogin(res.data).unwrap()
 
       dispatch(setCredentials(responce));
 
       navigate('/')
+      } catch (error) {
+        console.log(error);
+        const errorData = (error as { data: ErrorResponseDisplay }).data;
+        toast.error(errorData)
+      }
+      
       
   })
   .catch((err) => console.log(err));

@@ -1,58 +1,37 @@
 // import React from 'react';
-import { Container, Typography, Button, Box, Grid } from '@mui/material';
-import { Link } from 'react-router-dom';
+
+ import image from '../assets/about_image-2.png'
 
 const Home: React.FC = () => {
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ textAlign: 'center', py: 10 }}>
-        <Typography variant="h1" component="h1" gutterBottom>
-          Welcome to HireHub
-        </Typography>
-        <Typography variant="h6" color="textSecondary" paragraph>
-          Your go-to platform for job opportunities and career growth.
-        </Typography>
-        <Button variant="contained" color="primary" component={Link} to="/" sx={{ mr: 2 }}>
-          Find Jobs
-        </Button>
-       
-      </Box>
+    <>
+    <div className='w-full bg-blue-50 flex flex-col md:flex-row items-center justify-center p-5'>
+  <div className='w-full md:w-1/2 m-5'>
+    <img src={image} alt="" className='w-full h-auto' />
+  </div>
+  <div className='w-full md:w-2/5 m-5 text-left'>
+    <h3 className='text-center text-1xl font-semibold mb-2'>Get your jobs</h3>
+    <h1 className='text-3xl font-bold mb-4'>Over 12,000 Jobs</h1>
 
-      <Box sx={{ py: 8 }}>
-        <Grid container spacing={4}>
-          <Grid item xs={12} sm={6} md={4}>
-            <Box sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, textAlign: 'center' }}>
-              <Typography variant="h6" gutterBottom>
-                Explore Job Listings
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Browse through various job listings and find your dream job.
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <Box sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, textAlign: 'center' }}>
-              <Typography variant="h6" gutterBottom>
-                Post a Job
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Let potential candidates find your job openings by posting a job.
-              </Typography>
-            </Box>
-          </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <Box sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, textAlign: 'center' }}>
-              <Typography variant="h6" gutterBottom>
-                Sign Up for Updates
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Stay updated with the latest job opportunities and career advice.
-              </Typography>
-            </Box>
-          </Grid>
-        </Grid>
-      </Box>
-    </Container>
+    <p className='mb-4'>Our platform is designed to connect job seekers with the perfect opportunities.
+       With an intuitive interface and advanced search filters, finding your ideal job has never been easier.
+        Whether you're looking for full-time, part-time, or remote work, our application has you covered.</p>
+    
+    <ul className='list-disc list-inside mb-4'>
+      <li>Flexible work hours</li>
+      <li>Remote job opportunities</li>
+      <li>Competitive salaries</li>
+      <li>Career growth prospects</li>
+    </ul>
+
+      <div className='flex items-center justify-center'>
+         <button className='bg-blue-800 text-white w-1/2 py-2 px-4 rounded hover:bg-blue-700 transition'>Find Your Job</button>
+         <button className='m-4 text-blue-800 hover:text-blue-600 transition'>Update Your Profile</button>
+       </div>
+     </div>
+  </div>
+
+    </>
   );
 };
 

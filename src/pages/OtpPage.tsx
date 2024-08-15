@@ -172,7 +172,7 @@ const OTPRegisterForm: React.FC = () => {
 
   return (
     <Container maxWidth="sm">
-      <Box mt={8} p={3} bgcolor="background.paper" boxShadow={3} borderRadius={2}>
+      <Box mt={8} mb={8} p={3} bgcolor="background.paper" boxShadow={3} borderRadius={2}>
         <Typography variant="h4" align="center" gutterBottom m={3}>
           OTP Registration
         </Typography>
