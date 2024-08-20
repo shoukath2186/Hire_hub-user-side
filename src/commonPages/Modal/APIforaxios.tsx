@@ -1,31 +1,30 @@
+import { logout } from '../../slices/authSlice';
+import axios, { AxiosError } from 'axios';
+import store from '../../store'; 
+import { toast } from 'react-toastify';
 
-
-import axios from 'axios';
-
-
-export  const axiosInstance = axios.create({
+export const axiosInstance = axios.create({ 
   baseURL: 'http://localhost:3000', 
- 
+  withCredentials: true,
 });
 
-
-
+function logoutUser() {
+  store.dispatch(logout());
+}
 
 axiosInstance.interceptors.response.use(
-    (response) => {
-     
-      console.log('Response received:', response);
+  (response) => {
+    return response;
+  },
+  (error: AxiosError) => {
+
+    if (error.response?.status === 414) {
   
-      return response;
-    },
-    (error) => {
-     
-      if (error.response.status === 401) {
-        console.error('Unauthorized - redirecting to login...');
-       
-      }
-  
-      return Promise.reject(error);
+      const errorMessage = error.response?.data || 'An error occurred';
+      toast.error(errorMessage);
+      logoutUser(); 
     }
-  );
-  
+
+    return Promise.reject(error);  
+  }
+);

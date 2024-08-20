@@ -14,7 +14,7 @@ import { ErrorResponseDisplay } from '../datatypes.ts/userRes';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../slices/authSlice';
-import { useGoogleLogin  } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 
 
@@ -27,8 +27,8 @@ function Login(): JSX.Element {
   const [open, setOpen] = useState<boolean>(false);
   const [modalMessage, setModaMessage] = useState<string>('')
 
-  const [login, { isLoading: isVerifying } ] = useLoginReqMutation();
-  const [googleLogin,{ isLoading: isVerifyingoogle }]=useGoogleloginMutation()
+  const [login, { isLoading: isVerifying }] = useLoginReqMutation();
+  const [googleLogin, { isLoading: isVerifyingoogle }] = useGoogleloginMutation()
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -61,7 +61,7 @@ function Login(): JSX.Element {
   };
 
   const handleOpen = () => {
-   
+
     setOpen(true);
   };
   const handleClose = () => {
@@ -70,8 +70,8 @@ function Login(): JSX.Element {
   const handleModal = () => {
 
     setOpen(false);
-     navigate(`/otp-verification?Id=${email}&resend=success`)
-    
+    navigate(`/otp-verification?Id=${email}&resend=success`)
+
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -107,98 +107,98 @@ function Login(): JSX.Element {
     }
   };
 
-  const handleGoogleLogin =useGoogleLogin({
-    
-    onSuccess: (codeResponse:any) =>{
+  const handleGoogleLogin = useGoogleLogin({
+
+    onSuccess: (codeResponse: any) => {
       //console.log(codeResponse);
 
       googleData(codeResponse)
-      
+
     },
     onError: (error) => {
       console.log(error);
-      
+
     }
-});
+  });
 
-function googleData(user:any){
+  function googleData(user: any) {
 
-  axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+    axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
       headers: {
-          Authorization: `Bearer ${user.access_token}`,
-          Accept: 'application/json'
+        Authorization: `Bearer ${user.access_token}`,
+        Accept: 'application/json'
       }
-  })
-  .then(async (res) => {
-      try {
-        const responce = await googleLogin(res.data).unwrap()
+    })
+      .then(async (res) => {
+        try {
+          const responce = await googleLogin(res.data).unwrap()
 
-      dispatch(setCredentials(responce));
+          dispatch(setCredentials(responce));
 
-      navigate('/')
-      } catch (error) {
-        console.log(error);
-        const errorData = (error as { data: ErrorResponseDisplay }).data;
-        toast.error(errorData)
-      }
-      
-      
-  })
-  .catch((err) => console.log(err));
+          navigate('/')
+        } catch (error) {
+          console.log(error);
+          const errorData = (error as { data: ErrorResponseDisplay }).data;
+          toast.error(errorData)
+        }
 
-}
+
+      })
+      .catch((err) => console.log(err));
+
+  }
 
   return (
     <>
       <Modal
-  open={open}
-  onClose={handleClose}
-  aria-labelledby="child-modal-title"
-  aria-describedby="child-modal-description"
->
-  <Box sx={{
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 4,
-    borderRadius: '8px',
-    width: { xs: '90%', sm: '70%', md: '50%' }, // Responsive width
-    maxWidth: '500px', // Maximum width for larger screens
-    textAlign: 'center'
-  }}>
-    <Typography id="child-modal-title" variant="h6" component="h2" fontWeight="bold">
-      OTP Verification Required
-    </Typography>
-    <Typography id="child-modal-description" sx={{ mt: 2, mb: 3 }}>
-      {modalMessage}
-    </Typography>
-    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
-      <Button 
-        onClick={handleClose} 
-        sx={{ 
-          bgcolor: '#f44336', 
-          color: 'white',
-          '&:hover': { bgcolor: '#d32f2f' }, 
-        }}
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="child-modal-title"
+        aria-describedby="child-modal-description"
       >
-        Cancel
-      </Button>
-      <Button 
-        onClick={handleModal} 
-        sx={{ 
-          bgcolor: '#3f51b5', // Blue color for Submit button
-          color: 'white',
-          '&:hover': { bgcolor: '#303f9f' }, // Darker blue on hover
-        }}
-      >
-        Verify
-      </Button>
-    </Box>
-  </Box>
-</Modal>
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          bgcolor: 'background.paper',
+          boxShadow: 24,
+          p: 4,
+          borderRadius: '8px',
+          width: { xs: '90%', sm: '70%', md: '50%' }, // Responsive width
+          maxWidth: '500px', // Maximum width for larger screens
+          textAlign: 'center'
+        }}>
+          <Typography id="child-modal-title" variant="h6" component="h2" fontWeight="bold">
+            OTP Verification Required
+          </Typography>
+          <Typography id="child-modal-description" sx={{ mt: 2, mb: 3 }}>
+            {modalMessage}
+          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+            <Button
+              onClick={handleClose}
+              sx={{
+                bgcolor: '#f44336',
+                color: 'white',
+                '&:hover': { bgcolor: '#d32f2f' },
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleModal}
+              sx={{
+                bgcolor: '#3f51b5',
+                color: 'white',
+                '&:hover': { bgcolor: '#303f9f' }, 
+              }}
+            >
+              Verify
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
 
       <Container maxWidth="lg">
 
@@ -286,11 +286,11 @@ function googleData(user:any){
               </IconButton>
             </Box>
             {/* {errors.email && <Alert severity="error" sx={{ mb: 2, width: '100%' }}>{errors.email}</Alert>}
-        {errors.password && <Alert severity="error" sx={{ mb: 2, width: '100%' }}>{errors.password}</Alert>} */}
+            {errors.password && <Alert severity="error" sx={{ mb: 2, width: '100%' }}>{errors.password}</Alert>} */}
             <Link href="/forget-password" sx={{ alignSelf: 'flex-end', mb: 3, color: '#1b2a6b' }}>
               <Typography variant="body2">Forgot Password?</Typography>
             </Link>
-            {isVerifying ||isVerifyingoogle ? (
+            {isVerifying || isVerifyingoogle ? (
               <Button
                 fullWidth
                 variant="contained"
@@ -337,9 +337,8 @@ function googleData(user:any){
                 '&:hover': { bgcolor: 'rgba(27, 42, 107, 0.04)' }
               }}
 
-              onClick={()=>handleGoogleLogin()}
+              onClick={() => handleGoogleLogin()}
             >
-             
               <FaGoogle style={{ marginRight: '12px' }} /> Sign in with Google
             </Button>
           </Box>

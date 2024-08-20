@@ -1,8 +1,9 @@
 // import React from 'react'
+import EditProfilePage from "../EditProfileComponent/displayEditProfile"
 
-function EditProfile() {
+function EditProfile() {  
   return (
-    <div>EditProfile</div>
+    <EditProfilePage/>
   )
 }
 

@@ -1,6 +1,7 @@
 // import React from 'react';
 
  import image from '../assets/about_image-2.png'
+ import DisplayJob from './Home/HomePage/DisplayJob';
 
 const Home: React.FC = () => {
   return (
@@ -30,6 +31,9 @@ const Home: React.FC = () => {
        </div>
      </div>
   </div>
+   <div>
+    <DisplayJob/>
+   </div>
 
     </>
   );

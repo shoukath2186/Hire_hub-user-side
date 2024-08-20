@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { 
   AccountCircle, ManageAccounts, Work, LocalActivity, 
-  Lock, ExitToApp, CreateNewFolder, Handyman, Menu 
+  Lock, ExitToApp, CreateNewFolder, Handyman, Menu ,Dashboard as dash
 } from '@mui/icons-material';
 
 import Profile from '../profilePage/profile';
@@ -23,9 +23,11 @@ interface MenuItem {
 }
 
 const DashboardLayout: React.FC = () => {
+  
   const user = useSelector((state: RootState) => state.auth.userInfo);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activePage, setActivePage] = useState('Dashboard');
+  const [activePage, setActivePage] = useState('Profile');
 
   const handlePageChange = (pageName: string) => {
     setActivePage(pageName);
@@ -34,15 +36,15 @@ const DashboardLayout: React.FC = () => {
 
   const seekerMenu: MenuItem[] = [
     { name: 'Profile', icon: AccountCircle, component: Profile },
-    { name: 'Edit Profile', icon: ManageAccounts, component: EditProfile },
+    { name: 'Job Profile', icon: ManageAccounts, component: EditProfile },
     { name: 'My Applications', icon: Work, component: MyJob },
     { name: 'Recent Activity', icon: LocalActivity, component: RecentActivity },
     { name: 'Security Settings', icon: Lock, component: SecuritySettings },
     { name: 'Sign Out', icon: ExitToApp,component:logOut }
   ];
-
-  const employerMenu: MenuItem[] = [
-    { name: 'Dashboard', icon: AccountCircle, component: Dashboard },
+   const employerMenu: MenuItem[] = [
+    { name: 'Profile', icon: AccountCircle, component: Profile },
+    { name: 'Employer Dashboard', icon: dash, component: Dashboard },
     { name: 'Post New Job', icon: CreateNewFolder, component: CreateJob },
     { name: 'Manage Listings', icon: Handyman, component: ManageListings },
     { name: 'Recent Activity', icon: LocalActivity, component: RecentActivity },

@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, Grid, Typography } from '@mui/material';
 import { IoMdClose } from 'react-icons/io';
 import { validation } from './newJobValidation';
+import { Job } from '../../datatypes.ts/IJob';
 import { skills } from '../../entities/data';
-import { Jobtype } from '../../entities/data'; 
+import { Jobtype } from '../../entities/data';
+
 
 import ComanyName from './JobFormAssets/ComanyName';
 import Contact from './JobFormAssets/Contact';
@@ -14,21 +16,25 @@ import Location from './JobFormAssets/Location';
 import Category from './JobFormAssets/Category';
 import Education from './JobFormAssets/Education';
 import { axiosInstance } from './APIforaxios';
+import CheckUpdat from './checkUpdateFeild';
 
-const AddJobModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, onClose }) => {
-    const [companyName, setCompanyName] = useState<string>('');
-    const [contact, setContact] = useState<string>('');
-    const [location, setLocation] = useState<string>('');
-    const [salary, setSalary] = useState<string>('');
-    const [title, setTitle] = useState<string>('');
-    const [type, setType] = useState<string>('');
-    const [description, setDescription] = useState<string>('');
-    const [category, setCategory] = useState<string>('');
-    const [skill, setSkill] = useState<string[]>([]);
-    const [education, setEducation] = useState<string>('');
-   
+const EditJob: React.FC<{ open: boolean; onClose: () => void, job: Job,setAllJob:Job[] | any }> = ({ open, onClose, job,setAllJob }) => {
+
+
+    const [companyName, setCompanyName] = useState<string>(job.name);
+    const [contact, setContact] = useState<string>(job.contact);
+    const [location, setLocation] = useState<string>(job.location);
+    const [salary, setSalary] = useState<string>(job.salary);
+    const [title, setTitle] = useState<string>(job.title);
+    const [type, setType] = useState<string>(job.job_type);
+    const [description, setDescription] = useState<string>(job.description);
+    const [category, setCategory] = useState<string>(job.category);
+    const [education, setEducation] = useState<string>(job.education);
+
+    const [skill, setSkill] = useState<string[]>(job.skill);
 
     const [allType] = useState<string[]>(Jobtype);
+
     const [allSkill] = useState<string[]>(skills);
 
 
@@ -39,41 +45,37 @@ const AddJobModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
     });
     //======================================================================================
     const handleSubmit = () => {
-        const valid = validation({
-            companyName, contact, location, salary, title, type, description, category, skill,education, 
-            setErrorData, setCompanyName, setContact, setLocation, setSalary, setTitle
+        const update = true
+        const valid = validation({ 
+            companyName, contact, location, salary, title, type, description, category, skill,education,
+            setErrorData, setCompanyName, setContact, setLocation, setSalary, setTitle, update
         });
         if (valid) {
 
-            console.log('success.');
-
+            const formData = CheckUpdat(companyName, contact, location, salary, title, type, description,
+                category, skill,education, job)
           
-            let   formData = {
-                    companyName, contact, location, salary, title, type, description,
-                    category, skill: skill,education
-                }
-            
-          
-            
-            axiosInstance.post('/job/addNewJob', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            })
-                .then((response) => {
-                    if (response.data == 'New job creation successful') {
-                        setCompanyName('');setContact(''),setLocation(''),setSalary(''),setTitle(''),setType(''),setDescription(''),setCategory('')
-                        setSkill([]),setEducation('')
-
-                        onClose();
-
-                    }
-
+            if (Object.keys(formData).length != 0) {
+                formData._id = job._id
+                axiosInstance.patch('/job/UpdateJob', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
                 })
-                .catch((error) => {
-                    console.log(error);
+                    .then((response) => {
+                        if (response.data) {
+                            setAllJob(response.data)
+                            onClose();
+                        }
 
-                });
+                    })
+                    .catch((error) => {
+                        console.log(error);
+
+                    });
+            } else {
+                onClose();
+            }
 
         }
     };
@@ -148,7 +150,7 @@ const AddJobModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
                         </select>
                         <p style={{ color: 'red' }}>{errorData.skill}</p>
                     </Grid>
-
+                    
 
                     <Grid item xs={12} sm={12}>
                         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -168,8 +170,7 @@ const AddJobModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
                     </Grid>
                     <Education education={education} setEducation={setEducation} error={errorData.education} />
                      
-                   
-
+                  
                 </Grid>
             </DialogContent>
 
@@ -191,4 +192,4 @@ const AddJobModal: React.FC<{ open: boolean; onClose: () => void }> = ({ open, o
     );
 };
 
-export default AddJobModal;
+export default EditJob;

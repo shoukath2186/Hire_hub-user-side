@@ -8,16 +8,19 @@ type ValidationProps = {
     description: string;
     category: string;
     skill: string[];
-    companyLogo: File|null;
+    education:string;
+   
+
     setErrorData: React.Dispatch<React.SetStateAction<ErrorData>>;
     setCompanyName: React.Dispatch<React.SetStateAction<string>>;
     setContact: React.Dispatch<React.SetStateAction<string>>;
     setLocation: React.Dispatch<React.SetStateAction<string>>;
     setSalary: React.Dispatch<React.SetStateAction<string>>;
     setTitle: React.Dispatch<React.SetStateAction<string>>;
-  };
-  
-  type ErrorData = {
+    update?: boolean | null;
+};
+
+type ErrorData = {
     companyName: string;
     contact: string;
     location: string;
@@ -27,10 +30,11 @@ type ValidationProps = {
     description: string;
     category: string;
     skill: string;
-    companyLogo: string;
-  };
-  
-  export function validation({
+    education:string;
+    
+};
+
+export function validation({
     companyName,
     contact,
     location,
@@ -40,30 +44,32 @@ type ValidationProps = {
     description,
     category,
     skill,
-    companyLogo,
-
+    education,
+   
     setErrorData,
     setCompanyName,
     setContact,
     setLocation,
     setSalary,
     setTitle,
-  }: ValidationProps): boolean {
-    // Reset error data before validation
+    
+}: ValidationProps): boolean {
+
     setErrorData({
-      companyName: '',
-      contact: '',
-      location: '',
-      salary: '',
-      title: '',
-      type: '',
-      description: '',
-      category: '',
-      skill: '',
-      companyLogo:'',
+        companyName: '',
+        contact: '',
+        location: '',
+        salary: '',
+        title: '',
+        type: '',
+        description: '',
+        category: '',
+        skill: '',
+        education:'',
+        
     });
-  
-    let valid = true; // Use let to allow reassignment
+
+    let valid = true;
 
     if (!companyName.trim()) {
         setErrorData((prevErrorData) => ({
@@ -170,14 +176,14 @@ type ValidationProps = {
         }));
         valid = false;
     }
-
-    if (!companyLogo) {
+    if (!education) {
         setErrorData((prevErrorData) => ({
             ...prevErrorData,
-            companyLogo: 'companyLogo is required'
+            education: 'Job Type is required'
         }));
         valid = false;
     }
+   
 
 
 

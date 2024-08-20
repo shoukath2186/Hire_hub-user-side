@@ -4,21 +4,28 @@
 import { Grid } from '@mui/material'
 import axios from 'axios';
 import  { useEffect, useState } from 'react'
+import { axiosInstance } from '../APIforaxios';
 
 const Category: React.FC<{
     category: string;
     setCategory: (value: string) => void;
     error: string;
-}> = ({ category, setCategory, error }) => {
+}> = ({ category, setCategory, error }) => { 
 
     const [allCategory, setAllCategory] = useState<{ _id: string, name: string }[]>([]);
 
     async function getCategory() {
         try {
-            const response = await axios.get('http://localhost:3000/job/allCalegory')
-            await setAllCategory(response.data)
+            const response = await axiosInstance.get('/job/allCalegory',{
+                withCredentials: true,
+            })
+          setAllCategory(response.data) 
+          //console.log(1111,response);
+          
         } catch (error) {
-            console.log(2222, error);
+            if (axios.isAxiosError(error)) {
+           // console.log(2222,  error.response?.data.message);
+            }
         }
     }
     useEffect(() => {
@@ -47,6 +54,7 @@ const Category: React.FC<{
                 </select>
                 <p style={{ color: 'red' }}>{error}</p>
             </Grid>
+           
         </>
     )
 }

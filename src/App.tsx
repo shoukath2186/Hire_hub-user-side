@@ -7,7 +7,12 @@ import Register from './pages/Register.tsx';
 import OTPRegisterForm from './pages/OtpPage.tsx';
 import ForgotPassword from './pages/forgetPassword.tsx';
 import ResetPassword from './pages/resetPassword.tsx';
+
 import Home from './commonPages/home.tsx';
+import Job from './commonPages/job.tsx';
+import About from './commonPages/about.tsx';
+import Contact from './commonPages/contact.tsx';
+
 import LayoutProfile from './commonPages/Layout/layoutProfile.tsx';
 
 import Navbar from "./components/Navbar.tsx";
@@ -36,8 +41,11 @@ function App() {
                 <Route path="/forget-password" element={<AuthRedirect><ForgotPassword /></AuthRedirect>} />
                 <Route path="/reset-password" element={<AuthRedirect><ResetPassword /></AuthRedirect>} />
                 <Route path="/profile" element={<ProtectedRoute><LayoutProfile /></ProtectedRoute>} />
+                <Route path="/job" element={<ProtectedRoute><Job /></ProtectedRoute>} />
+                <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
+                <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
 
-                {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </main>
 
