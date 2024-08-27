@@ -1,8 +1,12 @@
 // import React from 'react'
 
+import ProfileEdit from "./ProfileSettings/Settings"
+
 function Settings() {
   return (
-    <div>Settings</div>
+    <div className="w-full">
+      <ProfileEdit/>
+    </div>
   )
 }
 

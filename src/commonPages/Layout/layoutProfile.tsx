@@ -1,18 +1,19 @@
 import  { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
+//LocalActivity, 
 import { 
-  AccountCircle, ManageAccounts, Work, LocalActivity, 
+  AccountCircle, ManageAccounts, Work, 
   Lock, ExitToApp, CreateNewFolder, Handyman, Menu ,Dashboard as dash
 } from '@mui/icons-material';
 
 import Profile from '../profilePage/profile';
 import CreateJob from '../profilePage/Create_job';
-import MyJob from '../profilePage/My_job';
+import MyJob from '../profilePage/My_job';//
 import Dashboard from '../profilePage/dashboard';
 import SecuritySettings from '../profilePage/settings';
-import RecentActivity from '../profilePage/activity';
-import ManageListings from '../profilePage/My_job';
+//import RecentActivity from '../profilePage/activity';
+import ManageListings from '../profilePage/JobMenagement';//
 import EditProfile from '../profilePage/editProfile';
 import logOut from '../profilePage/logOut';
 
@@ -38,16 +39,16 @@ const DashboardLayout: React.FC = () => {
     { name: 'Profile', icon: AccountCircle, component: Profile },
     { name: 'Job Profile', icon: ManageAccounts, component: EditProfile },
     { name: 'My Applications', icon: Work, component: MyJob },
-    { name: 'Recent Activity', icon: LocalActivity, component: RecentActivity },
+   // { name: 'Recent Activity', icon: LocalActivity, component: RecentActivity },
     { name: 'Security Settings', icon: Lock, component: SecuritySettings },
     { name: 'Sign Out', icon: ExitToApp,component:logOut }
   ];
    const employerMenu: MenuItem[] = [
     { name: 'Profile', icon: AccountCircle, component: Profile },
     { name: 'Employer Dashboard', icon: dash, component: Dashboard },
-    { name: 'Post New Job', icon: CreateNewFolder, component: CreateJob },
+    { name: 'Job Manage', icon: CreateNewFolder, component: CreateJob },
     { name: 'Manage Listings', icon: Handyman, component: ManageListings },
-    { name: 'Recent Activity', icon: LocalActivity, component: RecentActivity },
+    //{ name: 'Recent Activity', icon: LocalActivity, component: RecentActivity },
     { name: 'Security Settings', icon: Lock, component: SecuritySettings },
     { name: 'Sign Out', icon: ExitToApp,component:logOut }
   ];
@@ -97,8 +98,8 @@ const DashboardLayout: React.FC = () => {
             </nav>
           </aside>
 
-          {/* Main Content */}
-          <main className="flex-grow bg-gray-200 p-4 lg:w-3/4 shadow-xl md:p-6 lg:ml-8 bg-gray-150 rounded-lg">
+          
+          <main className="flex-grow bg-[#EFE8DE] p-4 lg:w-3/4 shadow-xl md:p-6 lg:ml-8 bg-gray-150 rounded-lg">
             <div className="max-w-7xl mx-auto">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 md:mb-6">
                 {activePage}

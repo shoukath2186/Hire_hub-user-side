@@ -44,7 +44,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ userInfo, isOpenMenu, toggleDropdow
   async function handileProfile(click: string) {
 
     toggleDropdown();
-
+ 
     if (click === 'Logout') {
       setModalHeading('Logout Confirmation');
       setModalMessage('Are you sure you want to log out?')
@@ -86,11 +86,11 @@ const UserMenu: React.FC<UserMenuProps> = ({ userInfo, isOpenMenu, toggleDropdow
         <div className={`${mobile ? 'relative' : 'absolute'} right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-10 dropdown-menu`}>
           <ul className="py-1">
             
-            {userInfo.user_role == 'employer' ? (['Profile', 'Add New Post', 'Create new Job', 'Logout'].map((item) => (
+            {userInfo.user_role == 'employer' ? (['Profile', 'Create new Job', 'Logout'].map((item) => (
               <li key={item} onClick={() => handileProfile(item)} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
                 {item}
               </li>
-            ))) : (['Profile', 'Add New Post', 'Logout'].map((item) => (
+            ))) : (['Profile', 'Logout'].map((item) => (
               <li key={item} onClick={() => handileProfile(item)} className="hover:bg-gray-100 px-4 py-2 cursor-pointer">
                 {item}
               </li>

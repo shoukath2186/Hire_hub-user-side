@@ -16,7 +16,7 @@ export interface FormData {
     confirmPassword?: string;
   }
 
-  interface UserType {
+  export interface UserType {
     _id: string ;
     user_name: string;
     last_name: string;
@@ -34,4 +34,4 @@ export interface FormData {
   export interface AuthState {
     userInfo: UserType | null;
   }
-
+   

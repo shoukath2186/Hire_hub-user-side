@@ -2,10 +2,11 @@ import { Add, Edit, Delete } from "@mui/icons-material";
 import { UserProfile } from '../../../datatypes.ts/IJobProfile';
 import { useState, useEffect } from "react";
 import { Experience as ExperienceModal } from "../../../datatypes.ts/IJobProfile";
+import CustomModal from "../../Modal/LogoutModal";
 
 interface UserBioProps {
   profile: UserProfile;
-  setEditProfile: React.Dispatch<React.SetStateAction<UserProfile>>;
+  setEditProfile: React.Dispatch<React.SetStateAction<UserProfile|null>>;
 }
 
 const Experience: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
@@ -13,12 +14,22 @@ const Experience: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
   const [edit, setEdit] = useState<{ value: boolean, Id: number | undefined }>({ value: false, Id: undefined });
   const [error, setError] = useState<{ value: string, id: number }>({ value: '', id: -1 });
 
+  //  modal conformation
+
+  const [open, setOpen] = useState<boolean>(false);
+  const [removeIndex,setRemoveIndex]=useState<number>(-1)
+  const [modalHeading,setModalHeading]=useState<string>('')
+  const [modalMessage,setModalMessage]=useState<string>('')
+
  
   const [value, setValue] = useState<ExperienceModal[]>([]);
 
+ 
+
   useEffect(() => {
+    setEdit({ value: false, Id: undefined })
     setValue(profile.experience);
-  }, [profile.experience]);
+  }, [profile]);
 
   const handleExperienceChange = (index: number, field: string, newValue: string) => {
     const newExperience = [...value];
@@ -42,14 +53,7 @@ const Experience: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
     setEdit({ value: true, Id: index });
   };
 
-  const removeExperience = (index: number) => {
-    
-
-    const newExperience = value.filter((_, i) => i !== index);
-    setValue(newExperience);
-    setError({ value: '', id: -1 });
-    setEdit({ value: false, Id: undefined });
-  };
+ 
 
   const confirm = (index: number) => {
     const experience = value[index];
@@ -59,7 +63,12 @@ const Experience: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
     }
 
    
-    setEditProfile(prev => ({ ...prev, experience: value }));
+    setEditProfile(prev => {
+      if (prev !== null) {
+        return { ...prev, experience: value } as UserProfile;
+      }
+      return prev;
+    });
     setEdit({ value: false, Id: undefined });
     setError({ value: '', id: -1 });
   };
@@ -71,8 +80,41 @@ const Experience: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
     setError({ value: '', id: -1 }); 
   };
 
+  
+  //  modal conformation
+
+  
+
+  const handleOpen = (index:number) =>{
+    setModalHeading('Confirmation of Experience Removal');
+    setModalMessage('Are you sure you want to remove this experience?');
+    setRemoveIndex(index)
+     setOpen(true)
+
+  };
+  const handleClose = () => setOpen(false);
+
+  const handleModal = async () => {
+    const removeExperience = (index: number) => {
+    
+
+      const newExperience = value.filter((_, i) => i !== index);
+      setValue(newExperience);
+      setError({ value: '', id: -1 });
+      setEdit({ value: false, Id: undefined });
+    };
+
+     removeExperience(removeIndex)
+
+    setOpen(false);
+  
+  }
+
+  
+
   return (
     <div className="mb-4">
+      <CustomModal open={open}  handleClose={handleClose} handleModal={handleModal} title={modalHeading} message={modalMessage} />
       <label className="block text-4-color text-2xl mb-5 mt-7 font-bold ">
         Experience
       </label>
@@ -136,7 +178,7 @@ const Experience: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
                 Cancel
               </button>
               <button
-                onClick={() => removeExperience(index)}
+                onClick={() => handleOpen(index)}
                 className="bg-red-500 text-white font-bold py-2 px-4 rounded mt-2 hover:bg-red-700"
               >
                 <Delete /> Remove Experience
@@ -144,7 +186,7 @@ const Experience: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
             </div>
           )}
         </div>
-      ))}
+      ))} 
       {!edit.value?(
         <button
         type="button"
@@ -154,7 +196,7 @@ const Experience: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
         <Add /> Add Experience
       </button>
       ):''}
-      
+      <hr className="w-full border-t-2 border-3-color my-4"/>
     </div>
   );
 }

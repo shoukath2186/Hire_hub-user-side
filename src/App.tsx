@@ -12,6 +12,7 @@ import Home from './commonPages/home.tsx';
 import Job from './commonPages/job.tsx';
 import About from './commonPages/about.tsx';
 import Contact from './commonPages/contact.tsx';
+import JobDisplay from './commonPages/jobDisplay.tsx';
 
 import LayoutProfile from './commonPages/Layout/layoutProfile.tsx';
 
@@ -44,6 +45,7 @@ function App() {
                 <Route path="/job" element={<ProtectedRoute><Job /></ProtectedRoute>} />
                 <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
                 <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
+                <Route path="/jobDetails" element={<ProtectedRoute><JobDisplay /></ProtectedRoute>} />
 
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>

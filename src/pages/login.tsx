@@ -110,8 +110,7 @@ function Login(): JSX.Element {
   const handleGoogleLogin = useGoogleLogin({
 
     onSuccess: (codeResponse: any) => {
-      //console.log(codeResponse);
-
+      
       googleData(codeResponse)
 
     },

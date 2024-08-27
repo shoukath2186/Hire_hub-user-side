@@ -4,7 +4,7 @@ import { UserProfile } from "../../../datatypes.ts/IJobProfile";
 
 interface UserBioProps {
   profile: UserProfile;
-  setEditProfile: React.Dispatch<React.SetStateAction<UserProfile>>;
+  setEditProfile: React.Dispatch<React.SetStateAction<UserProfile | null>>;
 }
 
 const UserBio: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
@@ -25,16 +25,18 @@ const UserBio: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
   }
   function conform(){
     setError('')
-    // if(!value.trim()){
-    //     errorHandil('Bio is requred');
-    //     return
-    // }
+    
     if(value&&value.length<6){
       errorHandil('value must have 5 length');
       return
     }
 
-    setEditProfile(prev => ({ ...prev, bio: value }))
+    setEditProfile(prev => {
+      if (prev !== null) {
+        return { ...prev, bio: value };
+      }
+      return prev;
+    })
     setEdit(true)
   }
 
@@ -79,6 +81,7 @@ const UserBio: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
            </div>
 
          )}
+
         </div>
 
   )

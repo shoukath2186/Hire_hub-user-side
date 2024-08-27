@@ -1,4 +1,3 @@
-
 import UserInfo from './EditProfileComponents/UserInfo';
 import UserBio from './EditProfileComponents/UserBio';
 import LocationPro from './EditProfileComponents/LocationEdit';
@@ -8,96 +7,127 @@ import SocialMedia from './EditProfileComponents/SocialMedia';
 import Experience from './EditProfileComponents/Experience';
 import Education from './EditProfileComponents/Education';
 import Hobby from './EditProfileComponents/Hobby';
+import Resume from './EditProfileComponents/Resume';
 
 import { UserProfile } from '../../datatypes.ts/IJobProfile';
+import { useEffect, useState } from 'react';
+import { axiosInstance } from '../Modal/APIforaxios';
 
-import { useState } from 'react';
+import ChechChenges from './findChenges';
+import { useSelector } from 'react-redux';
+import { AuthState } from '../../datatypes.ts/IUserData';
 
-const userProfile = {
-  id: "12345",
-  username: "StylishCoder",
-  fullName: "Shoukath Otm",
-  email:"shoukathot77@gmail.com", 
-  profilePicture: "https://example.com/path/to/profile-picture.jpg",
-  bio: "Full-Stack Developer | MERN Enthusiast | Coffee Lover ☕",
-  location: "New York, USA",
-  website: "https://stylishcoder.dev",
-  skills: ["JavaScript", "React", "Node.js", "TypeScript", "Tailwind CSS"],
-  socialLinks: {
-    github: "https://github.com/StylishCoder",
-    linkedin: "https://linkedin.com/in/StylishCoder",
-    twitter: "https://twitter.com/StylishCoder"
-  },
-  experience: [
-    {
-      role: "MERN Stack Developer",
-      company: "Tech Innovators Inc.",
-      duration: "Jan 2023 - Present",
-      description: "Developing scalable web applications using the MERN stack."
-    },
-    {
-      role: "Frontend Developer",
-      company: "Creative Solutions",
-      duration: "May 2021 - Dec 2022",
-      description: "Designed and implemented user-friendly UI/UX with React."
-    }
-  ],
-  education: [
-    {
-      degree: "Bachelor's in Computer Science",
-      institution: "Tech University",
-      year: "2020"
-    }
-  ],
-  hobbies: ["Coding", "Blogging", "Traveling", "Photography"]
-};
+import { toast } from 'react-toastify';
 
 function EditProfilePage() {
+  const [profile,seProfile]=useState<UserProfile | null>(null);
+  const [editProfile, setEditProfile] = useState<UserProfile | null>(null);
 
-  // const [profile, setProfile] = useState(userProfile);
-  const [editProfile,setEditProfile]=useState<UserProfile>(userProfile)
+  const { userInfo } = useSelector((state: AuthState | any) => state.auth);
+  const [loading,setLoading]=useState<boolean>(false)
+
+  
+  
+
+  useEffect(() => {
+    axiosInstance.get('/profile/userJobProfile')
+      .then(res => {
+        setEditProfile(res.data[0]);
+        seProfile(res.data[0])
+      })
+      .catch(error => {
+        setEditProfile(null);
+        console.log('Error fetching profile:', error);
+      });
+  }, []);
+
+  const createProfile = () => {
+ 
+    axiosInstance.post('/profile/createProfile')
+      .then(res => {
+        
+        setEditProfile(res.data[0]);
+        seProfile(res.data[0])
+      })
+      .catch(error => {
+        console.log('Error creating profile:', error.message);
+      });
+  };
+
+ 
 
   const handleSubmit = (e: React.FormEvent) => {
+    setLoading(true)
 
     e.preventDefault();
-    // Here you would typically send the updated profile to your backend
-    console.log('Updated Profile:', editProfile);
+    const data=ChechChenges(profile,editProfile);
+
+  
+   console.log(9999,data);
+   
+  if (Object.keys(data).length === 0) {
+    toast.error('Could not find the edited value. Please check and try again.')
+    setLoading(false)
+      return; 
+  }
+
+    axiosInstance.put('/profile/updateJobProfile',data,{
+      headers: {
+        'Content-Type': 'multipart/form-data', 
+      },
+    }).then((res)=>{
+
+      toast.success('Update successful! Your changes have been saved.');
+      setLoading(false)
+      setEditProfile(res.data);
+        seProfile(res.data)
+      
+    }).catch((error)=>{
+      console.log(error);
+      
+    })
+    
   };
 
   return (
-    <div className="min-h-screen  py-12 ">
+    <div className="min-h-screen py-12 bg-[#EFE8DE]">
       <div className="w-full mx-auto">
-        <form action="" onClick={handleSubmit}>
+        {editProfile ? (
+          <form onSubmit={handleSubmit}>
+            <UserInfo profile={userInfo} />
+            <UserBio profile={editProfile} setEditProfile={setEditProfile} />
+            <LocationPro profile={editProfile} setEditProfile={setEditProfile} />
+            <Website profile={editProfile} setEditProfile={setEditProfile} />
+            <Skill profile={editProfile} setEditProfile={setEditProfile} />
+            <SocialMedia profile={editProfile} setEditProfile={setEditProfile} />
+            <Experience profile={editProfile} setEditProfile={setEditProfile} />
+            <Education profile={editProfile} setEditProfile={setEditProfile} />
+            <Resume profile={editProfile} setEditProfile={setEditProfile}/>
+            <Hobby profile={editProfile} setEditProfile={setEditProfile} />
+            <div className="flex items-center justify-center mt-7">
+              <button
+                type="submit"
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                {loading?'Loading....':'Save Changes'}
+                
+              </button>
+            </div>
+          </form>
+        ) : (
+          <>
+          <UserInfo profile={userInfo} />
+          <div className="flex items-center justify-center mt-7">
 
-       <UserInfo profile={editProfile} setEditProfile={setEditProfile}/>
-
-       <UserBio profile={editProfile} setEditProfile={setEditProfile}/>
-
-       <LocationPro profile={editProfile} setEditProfile={setEditProfile}/>
-       
-       <Website profile={editProfile} setEditProfile={setEditProfile}/>
-
-       <Skill profile={editProfile} setEditProfile={setEditProfile}/>
-       
-       <SocialMedia profile={editProfile} setEditProfile={setEditProfile}/>
-        
-       <Experience profile={editProfile} setEditProfile={setEditProfile}/>
-
-       <Education profile={editProfile} setEditProfile={setEditProfile}/>
-        
-       <Hobby profile={editProfile} setEditProfile={setEditProfile}/>
-
-        <div className="flex items-center justify-between">
           <button
-            type="submit"
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Save Changes
-          </button>
-        </div>
-        </form>
+          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+           onClick={createProfile}>Create Job Profile</button>
+          </div>
+          </>
+        )}
       </div>
     </div>
   );
 }
+
 export default EditProfilePage;

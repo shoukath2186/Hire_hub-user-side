@@ -28,15 +28,15 @@ function DisplayJob() {
           {job ? (job.map((item) => (
             <div key={item._id} className="job-card bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105">
               <div className="p-6">
-                <div className="flex justify-center mb-6">
-                  <img src={item.logo} alt="Company Logo" className="w-[100px] h-[100px] object-contain rounded-[30%] " />
+                <div className="flex justify-center mb-6"> 
+                  <img src={item.employerDetails.profilePicture=='hello'?'https://i.pinimg.com/originals/e0/45/31/e04531314590c7149e79853acfd772b0.png':item.employerDetails.profilePicture} alt="Company Logo" className="w-[100px] h-[100px] object-contain rounded-[30%] " />
                 </div>
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    {item.skill.slice(0, 3).map((skill) => (
+                    {item.skill.slice(0, 2).map((skill) => (
                       <span key={skill} className="text-xs font-bold text-green-500 mr-1 bg-green-100 px-3 py-1 rounded-full">{skill}</span>
                     ))}
-                     {item.skill.length>3?(<span> ...</span>):(<span></span>)} 
+                     {item.skill.length>2?(<span> ...</span>):(<span></span>)} 
                   </div>
 
                   <span className="text-xs font-bold text-indigo-500 bg-indigo-100 px-3 py-1 rounded-full">{item.job_type}</span>

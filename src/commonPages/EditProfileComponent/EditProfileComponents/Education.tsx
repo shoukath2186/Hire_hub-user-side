@@ -1,10 +1,11 @@
 import { Add, Delete, Edit } from '@mui/icons-material';
-import { useState } from 'react';
+import {  useState } from 'react';
 import { UserProfile, Education as EducationType } from '../../../datatypes.ts/IJobProfile';
+import CustomModal from '../../Modal/LogoutModal';
 
 interface UserBioProps {
   profile: UserProfile;
-  setEditProfile: React.Dispatch<React.SetStateAction<UserProfile>>;
+  setEditProfile: React.Dispatch<React.SetStateAction<UserProfile | null>>;
 }
 
 const Education: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
@@ -17,22 +18,16 @@ const Education: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
     updatedEducation[index] = { ...updatedEducation[index], [field]: value };
     setEducationState(updatedEducation);
   };
+  // useEffect(()=>{
+  //     setEducationState(profile.education)
+  //     setEdit({ value: false, id: null })
+  // },[profile])
 
   const addEducation = () => {
     setEducationState([...educationState, { degree: '', institution: '', year: '' }]);
   };
 
-  const removeEducation = (index: number) => {
-    const updatedEducation = educationState.filter((_, i) => i !== index);
-    setEducationState(updatedEducation);
 
-    
-    setErrors((prevErrors) => {
-      const newErrors = { ...prevErrors };
-      delete newErrors[index];
-      return newErrors;
-    });
-  };
 
   const validateFields = () => {
     let isValid = true;
@@ -68,11 +63,14 @@ const Education: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
   };
 
   const handleSave = () => {
+    
     if (validateFields()) {
-      setEditProfile((prev) => ({
-        ...prev,
-        education: educationState,
-      }));
+      setEditProfile(prev => {
+        if (prev !== null) {
+          return { ...prev, education: educationState } as UserProfile;
+        }
+        return prev;
+      });
       setEdit({ value: false, id: null });
     }
   };
@@ -80,22 +78,66 @@ const Education: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
   const handleEdit = (index: number) => {
     setEdit({ value: true, id: index });
   };
-
   const handleCancel = () => {
     setEducationState(profile.education);
     setEdit({ value: false, id: null });
     setErrors({});
   };
 
+
+
+  //---------------------modal conformation----
+
+  //  modal conformation
+
+  const [open, setOpen] = useState<boolean>(false);
+  const [removeIndex, setRemoveIndex] = useState<number>(-1)
+  const [modalHeading, setModalHeading] = useState<string>('')
+  const [modalMessage, setModalMessage] = useState<string>('')
+
+  const handleOpen = (index: number) => {
+    setModalHeading('Remove Education Confirmation');
+    setModalMessage('Are you certain you want to delete this education entry?');
+
+    setRemoveIndex(index)
+    setOpen(true)
+
+  };
+
+  const handleClose = () => setOpen(false);
+
+  const handleModal = async () => {
+
+    const removeEducation = (index: number) => {
+      const updatedEducation = educationState.filter((_, i) => i !== index);
+      setEducationState(updatedEducation);
+
+
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        delete newErrors[index];
+        return newErrors;
+      });
+    };
+
+    removeEducation(removeIndex)
+
+    setOpen(false);
+
+  }
+
+
+
   return (
     <div className="mb-4">
+      <CustomModal open={open} handleClose={handleClose} handleModal={handleModal} title={modalHeading} message={modalMessage} />
+
       <label className="block text-4-color text-2xl mb-3 mt-8 font-bold">Education</label>
       {educationState.map((edu, index) => (
         <div key={index} className="mb-4 p-4 border rounded">
           <input
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2 ${
-              errors[index]?.degree ? 'border-red-500' : ''
-            }`}
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2 ${errors[index]?.degree ? 'border-red-500' : ''
+              }`}
             type="text"
             value={edu.degree}
             onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
@@ -105,9 +147,8 @@ const Education: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
           {errors[index]?.degree && <p className="text-red-500 text-xs italic">{errors[index].degree}</p>}
 
           <input
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2 ${
-              errors[index]?.institution ? 'border-red-500' : ''
-            }`}
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2 ${errors[index]?.institution ? 'border-red-500' : ''
+              }`}
             type="text"
             value={edu.institution}
             onChange={(e) => handleEducationChange(index, 'institution', e.target.value)}
@@ -117,9 +158,8 @@ const Education: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
           {errors[index]?.institution && <p className="text-red-500 text-xs italic">{errors[index].institution}</p>}
 
           <input
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2 ${
-              errors[index]?.year ? 'border-red-500' : ''
-            }`}
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-2 ${errors[index]?.year ? 'border-red-500' : ''
+              }`}
             type="text"
             value={edu.year}
             onChange={(e) => handleEducationChange(index, 'year', e.target.value)}
@@ -143,7 +183,7 @@ const Education: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
                 Cancel
               </button>
               <button
-                onClick={() => removeEducation(index)}
+                onClick={() => handleOpen(index)}
                 className="bg-red-500 text-white font-bold py-2 px-4 rounded mt-2 hover:bg-red-700"
               >
                 <Delete /> Remove Education
@@ -161,16 +201,17 @@ const Education: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
           )}
         </div>
       ))}
-    
-    {!edit.value?(
-      <button
-        type="button"
-        onClick={addEducation}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
-      >
-        <Add /> Add Education
-      </button>
-           ):''}
+
+      {!edit.value ? (
+        <button
+          type="button"
+          onClick={addEducation}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
+        >
+          <Add /> Add Education
+        </button>
+      ) : ''}
+      <hr className="w-full border-t-2 border-3-color my-4" />
     </div>
   );
 };

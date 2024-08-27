@@ -26,13 +26,17 @@ const Navbar: React.FC = () => {
 
     if (pathSegments[pathSegments.length - 1] === 'job') {
       setActiveItem('JOBS');
-    }else{
+    }else if(pathSegments[pathSegments.length - 1] === ''){
       setActiveItem('HOME')
+    }else if(pathSegments[pathSegments.length - 1] === 'about'){
+      setActiveItem('ABOUT')
+    }else if(pathSegments[pathSegments.length - 1] === 'contact'){
+      setActiveItem('CONTACT')
     }
     
   },[location.search])
-  
-  const navItems: string[] = ['HOME', 'POST', 'JOBS', 'ABOUT', 'CONTACT'];
+  //'POST',
+  const navItems: string[] = ['HOME',  'JOBS', 'ABOUT', 'CONTACT'];
 
   const toggleDropdown = () => setIsOpenMenu(prevState => !prevState);
   const toggleMobileMenu = () => setIsOpen(!isOpen);

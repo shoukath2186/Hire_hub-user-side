@@ -14,6 +14,8 @@ interface JobDisplayProps {
     setAllJob:Job[] | any
 }
 
+import { useSelector } from 'react-redux';
+import { AuthState } from '../../datatypes.ts/IUserData';
 
 
 const JobDisplay: React.FC<JobDisplayProps> = ({ allJob,setAllJob }) => {
@@ -25,7 +27,7 @@ const JobDisplay: React.FC<JobDisplayProps> = ({ allJob,setAllJob }) => {
     const [editData,setEditData]=useState<Job|null>(null)
 
     const [jobOpen, setJobOpen] = useState<boolean>(false);
-
+    const { userInfo } = useSelector((state: AuthState | any) => state.auth);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
@@ -70,7 +72,7 @@ const JobDisplay: React.FC<JobDisplayProps> = ({ allJob,setAllJob }) => {
                      
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between">
                         <div className="flex items-center mb-4 md:mb-0">
-                            <img className="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 border rounded" src={item.logo} alt="" />
+                            <img className="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 border rounded" src={userInfo.profilePicture=='hello'? 'https://i.pinimg.com/originals/e0/45/31/e04531314590c7149e79853acfd772b0.png':userInfo.profilePicture} alt="" />
                             <div className="text-start ml-4">
                                 <h5 className="mb-2 text-lg font-semibold">{item.name}</h5>
                                 <div className="text-sm text-gray-600 flex flex-wrap">

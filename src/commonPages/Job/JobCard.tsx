@@ -1,25 +1,37 @@
 import { Job } from '../../datatypes.ts/IJob';
 import { formatDistanceToNow } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 interface JobCardProps {
   job: Job;
 }
 
+
 function JobCard({ job }: JobCardProps) {
 
-    
+  const navigate=useNavigate()
+
+  const ApplayJob=(details:Job)=>{
+       
+     navigate('/jobDetails', { state: { jobDetails: details } });
+     console.log(details);
+     
+  
+  }
+  
+   
   return (
     <div className="job-card bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:scale-105">
       <div className="p-6">
         <div className="flex justify-center m-3">
-        <img src={job.logo} alt="Company Logo" className="w-[100px] h-[100px] object-contain rounded-[30%] " />
+        <img src={job.employerDetails.profilePicture=='hello'?'https://i.pinimg.com/originals/e0/45/31/e04531314590c7149e79853acfd772b0.png':job.employerDetails.profilePicture} alt="Company Logo" className="w-[100px] h-[100px] object-contain rounded-[30%] " />
         </div>
         <div className="flex items-center justify-between mb-4">
           <div>
-            {job.skill.slice(0, 3).map((skill) => (
+            {job.skill.slice(0, 2).map((skill) => (
               <span key={skill} className="text-xs font-bold text-green-500 mr-1 bg-green-100 px-3 py-1 rounded-full">{skill}</span>
             ))}
-            {job.skill.length>3?(<span> ...</span>):(<span></span>)} 
+            {job.skill.length>2?(<span> ...</span>):null} 
           </div>
           <span className="text-xs font-bold text-indigo-500 bg-indigo-100 px-3 py-1 rounded-full">{job.job_type}</span>
         </div>
@@ -34,13 +46,13 @@ function JobCard({ job }: JobCardProps) {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-xs text-gray-400">Posted: {formatDistanceToNow(new Date(job.createdAt))} ago</span>
-          <button className="inline-block px-4 py-2 text-indigo-500 border border-indigo-500 font-semibold rounded-lg hover:bg-indigo-500 hover:text-white transition-all duration-300">
+          <button onClick={()=>ApplayJob(job)}  className="inline-block px-4 py-2 text-indigo-500 border border-indigo-500 font-semibold rounded-lg hover:bg-indigo-500 hover:text-white transition-all duration-300">
             Apply Job
           </button>
         </div>
       </div>
-    </div>
-  );
+    </div> 
+  );  
 }
 
 export default JobCard;

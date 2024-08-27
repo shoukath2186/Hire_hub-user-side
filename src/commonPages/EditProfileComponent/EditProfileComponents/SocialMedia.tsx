@@ -7,7 +7,7 @@ import { useState } from 'react';
 
 interface UserBioProps {
   profile: UserProfile;
-  setEditProfile: React.Dispatch<React.SetStateAction<UserProfile>>;
+  setEditProfile: React.Dispatch<React.SetStateAction<UserProfile|null >>;
 }
 
 
@@ -31,15 +31,12 @@ const SocialMedia: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
   }
 
   function isValidUrl(value: string): boolean {
-    const urlPattern = new RegExp(
-      '^(https?:\\/\\/)?' + 
-      '((([a-zA-Z\\d]([a-zA-Z\\d-]*[a-zA-Z\\d])*)\\.)+[a-zA-Z]{2,}|' + 
-      '((\\d{1,3}\\.){3}\\d{1,3}))' + 
-      '(\\:\\d+)?(\\/[-a-zA-Z\\d%_.~+]*)*' + 
-      '(\\?[;&a-zA-Z\\d%_.~+=-]*)?' + 
-      '(\\#[-a-zA-Z\\d_]*)?$', 'i' 
-    );
-    return !!urlPattern.test(value);
+    try {
+      const url = new URL(value);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch (error) {
+      return false;
+    }
   }
 
   function hanileChinge(filed: string, value: string) {
@@ -63,44 +60,59 @@ const SocialMedia: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
   }
 
   function conform() {
-
     let data: SocialLinks = { github: '', twitter: '', linkedin: '' };
-    let conform=true
-    if (value.github && !isValidUrl(value.github)) {
-      errorHandil('The GitHub link is not a valid URL format. Please enter a valid URL starting with http:// or https://');
-      data.github = profile.socialLinks.github;
-      conform=false
+    let isValid = true;
+  
+    console.log(value);
+    console.log(profile.socialLinks);
+  
+    if (value.github) {
+      if (!isValidUrl(value.github)) {
+        errorHandil('The GitHub link is not a valid URL format. Please enter a valid URL starting with http:// or https://');
+        data.github = profile.socialLinks.github;
+        isValid = false;
+      } else {
+        data.github = value.github;
+      }
     } else {
-      data.github = value.github;
-      
+      data.github = '';
     }
   
-    if (value.twitter && !isValidUrl(value.twitter)) {
-      errorHandil('The Twitter link is not a valid URL format. Please enter a valid URL starting with http:// or https://');
-      data.twitter = profile.socialLinks.twitter;
-      conform=false
+    if (value.twitter) {
+      if (!isValidUrl(value.twitter)) {
+        errorHandil('The Twitter link is not a valid URL format. Please enter a valid URL starting with http:// or https://');
+        data.twitter = profile.socialLinks.twitter;
+        isValid = false;
+      } else {
+        data.twitter = value.twitter;
+      }
     } else {
-      data.twitter = value.twitter;
-    
+      data.twitter = '';
     }
   
-    if (value.linkedin && !isValidUrl(value.linkedin)) {
-      errorHandil('The LinkedIn link is not a valid URL format. Please enter a valid URL starting with http:// or https://');
-      data.linkedin = profile.socialLinks.linkedin;
-      conform=false
+    if (value.linkedin) {
+      if (!isValidUrl(value.linkedin)) {
+        errorHandil('The LinkedIn link is not a valid URL format. Please enter a valid URL starting with http:// or https://');
+        data.linkedin = profile.socialLinks.linkedin;
+        isValid = false;
+      } else {
+        data.linkedin = value.linkedin;
+      }
     } else {
-      data.linkedin = value.linkedin;
-      
+      data.linkedin = '';
     }
   
     setValue(data);
-    setEditProfile(v => ({ ...v, socialLinks: data }));
-    if(conform){
-      setEdit(true)
-    }
-   
-  }
   
+    setEditProfile((prev) => {
+      if (prev !== null) {
+        return { ...prev, socialLinks: data };
+      }
+      return prev;
+    });
+  
+    setEdit(isValid);
+  }
 
 
   return (
@@ -159,6 +171,7 @@ const SocialMedia: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
           <button onClick={canceld} className="bg-red-500 m-3 text-white font-bold py-2 px-4 rounded mt-2"> Cancel </button>
         </div>
       )}
+       <hr className="w-full border-t-2 border-3-color my-4" />
     </div>
   )
 }

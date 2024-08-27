@@ -1,15 +1,18 @@
 import { Delete, Add, Edit } from "@mui/icons-material";
-import { useState } from "react";
+import {  useState } from "react";
 import { UserProfile } from "../../../datatypes.ts/IJobProfile";
 
 interface UserBioProps {
   profile: UserProfile;
-  setEditProfile: React.Dispatch<React.SetStateAction<UserProfile>>;
+  setEditProfile: React.Dispatch<React.SetStateAction<UserProfile | null>>;
 }
 
 const Hobby: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
   const [edit, setEdit] = useState<boolean>(false);
+  const [hobbies, setHobbies] = useState<string[]>(profile.hobbies)
   const [error, setError] = useState<string>("");
+
+  
 
   function errorHandle(message: string) {
     setError(message);
@@ -18,30 +21,29 @@ const Hobby: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
     }, 5000);
   }
 
-  
   const handleHobbyChange = (index: number, value: string) => {
-   
-    if (!profile.hobbies.includes(value)) {
-      const newHobbies = [...profile.hobbies];
-      newHobbies[index] = value;
-      setEditProfile(prev => ({ ...prev, hobbies: newHobbies }));
-    } else {
-      errorHandle("The hobby you entered already exists in the list.");
-    }
+
+
+
+
+    const updatedHobbies = [...hobbies];
+    updatedHobbies[index] = value;
+    setHobbies(updatedHobbies);
+
+
   };
 
-  const addHobby = () => {
-    setEditProfile(prev => ({
-      ...prev,
-      hobbies: prev.hobbies.filter(hobby => hobby.trim() !== "")
-    }));
 
-    setEditProfile(prev => ({ ...prev, hobbies: [...prev.hobbies, ""] }));
+  const addHobby = () => {
+    setHobbies(prev => prev.filter((val) => val.trim() != ''))
+    setHobbies(prev => [...prev, '']);
   };
 
   const removeHobby = (index: number) => {
-    const newHobbies = profile.hobbies.filter((_, i) => i !== index);
-    setEditProfile(prev => ({ ...prev, hobbies: newHobbies }));
+    const newHobbies = hobbies.filter((_, i) => i !== index);
+
+    setHobbies(newHobbies)
+
   };
 
   const toggleEditMode = () => {
@@ -49,12 +51,32 @@ const Hobby: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
   };
 
   const confirmChanges = () => {
+
+    const trimmedHobbies = hobbies.map(hobby => hobby.trim()).filter(hobby => hobby !== '');
+
+   
+    const uniqueHobbies = Array.from(new Set(trimmedHobbies));
+
+    if (uniqueHobbies.length !== trimmedHobbies.length) {
+      errorHandle("Duplicate values found and removed.");
+    }
+
+    setHobbies(uniqueHobbies);
+
+   
+      setEditProfile(prev => {
+        if (prev) {
+          return {
+            ...prev,
+            hobbies: hobbies
+          };
+        }
+        return prev;
+      });
+      setEdit(false);
     
-    setEditProfile(prev => ({
-      ...prev,
-      hobbies: prev.hobbies.filter(hobby => hobby.trim() !== "")
-    }));
-    setEdit(false);
+
+
   };
 
   return (
@@ -63,17 +85,15 @@ const Hobby: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
         Hobbies
       </label>
 
-      {profile.hobbies.map((hobby, index) => (
+      {hobbies.map((hobbies, index) => (
         <div key={index} className="flex items-center mb-2 relative">
           <input
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mr-2"
             type="text"
-            value={hobby}
+            value={hobbies}
             disabled={!edit}
             onChange={(e) => handleHobbyChange(index, e.target.value)}
           />
-
-        
 
           {edit && (
             <button
@@ -103,6 +123,7 @@ const Hobby: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
           Confirm
         </button>
       )}
+      <hr className="w-full border-t-2 border-3-color my-4" />
     </div>
   );
 }

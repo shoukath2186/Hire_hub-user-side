@@ -1,18 +1,18 @@
 
 // import React from 'react';
-import { useSelector, UseSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { AuthState } from "../../../datatypes.ts/IUserData";
 
 const ProfilePage = () => {
 
     const { userInfo } = useSelector((state: AuthState | any) => state.auth);
-    console.log(userInfo);
+   
     
     return (
       <div className="max-w-4xl mx-auto p-8 bg-gray-100 rounded-lg shadow-md">
         <div className="flex items-center mb-8">
           <img
-            src={userInfo.profilePicture}
+            src={userInfo.profilePicture=='hello'?'https://cdn1.iconfinder.com/data/icons/business-people-16/512/18-512.png':userInfo.profilePicture}
             alt={`${userInfo.user_name} ${userInfo.last_name}`}
             className="w-36 h-36 rounded-full object-cover mr-6 border-4 border-white shadow-md"
           />

@@ -7,12 +7,14 @@ export interface Job {
     salary: string;
     description:string;
     job_type: string;
-    logo: string;
+    logo?: string;
     education:string;
+    applications:string[];
     skill: string[];
     category: string;
     createdAt: string;
     updatedAt: string;
+    employerDetails:any;
     __v: number;
   }
   

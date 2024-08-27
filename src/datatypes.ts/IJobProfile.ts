@@ -16,13 +16,19 @@ export interface Education {
   institution: string;
   year: string;
 }
-
-export interface UserProfile {
-  id: string;
-  username: string;
-  fullName: string;
+export interface UserData{
+  
+  user_name: string;
+  last_name: string;
   email: string;
   profilePicture: string;
+
+}
+
+export interface UserProfile {
+  _id?: string;
+  userId: string;
+  userData?:UserData[];
   bio: string;
   location: string;
   website: string;
@@ -31,5 +37,10 @@ export interface UserProfile {
   experience: Experience[];
   education: Education[];
   hobbies: string[];
+  resume:string|File;
+  _v?:number;
+  createdAt?:string;
+  updatedAt?:string;
+
 }
 

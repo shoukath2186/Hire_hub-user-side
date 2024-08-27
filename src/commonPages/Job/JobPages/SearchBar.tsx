@@ -31,7 +31,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ setAllJob,setReset,reset }) => {
         try {
             const response = await axiosInstance.get('/job/allLocation')
            
-            setLocation(response.data)
+            const uniqueLocations = response.data.filter(
+                (item: { location: string }, index: number, self: { location: string }[]) =>
+                  index === self.findIndex((t) => t.location === item.location)
+              );
+              
+              setLocation(uniqueLocations);
 
         } catch (error) {
             console.log(error);
@@ -41,9 +46,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ setAllJob,setReset,reset }) => {
     }
     async function Search() {
          setError('')
-        const searchData:any=await CheckValues(select)
-          
-        //    console.log(101,searchData);
+        const searchData:any=await CheckValues(select);
            
         if(searchData.length>0){
             setAllJob(searchData)

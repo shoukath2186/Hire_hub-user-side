@@ -8,13 +8,13 @@ import { UserProfile } from '../../../datatypes.ts/IJobProfile';
 
 interface UserBioProps {
   profile: UserProfile;
-  setEditProfile: React.Dispatch<React.SetStateAction<UserProfile>>;
+  setEditProfile: React.Dispatch<React.SetStateAction<UserProfile | null>>;
 }
 
 
 const Website: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
 
-  const [value,setValue]=useState<string>(profile.location);
+  const [value,setValue]=useState<string>(profile.website);
   const [edit,setEdit]=useState<boolean>(true)
   const [error,setError]=useState<string>('');
 
@@ -35,28 +35,28 @@ const Website: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
     setEdit(false) 
   }
   function isValidUrl(value: string): boolean {
-    const urlPattern = new RegExp(
-      '^(https?:\\/\\/)?' + 
-      '((([a-zA-Z\\d]([a-zA-Z\\d-]*[a-zA-Z\\d])*)\\.)+[a-zA-Z]{2,}|' + 
-      '((\\d{1,3}\\.){3}\\d{1,3}))' + 
-      '(\\:\\d+)?(\\/[-a-zA-Z\\d%_.~+]*)*' + 
-      '(\\?[;&a-zA-Z\\d%_.~+=-]*)?' + 
-      '(\\#[-a-zA-Z\\d_]*)?$', 'i' 
-    );
-    return !!urlPattern.test(value);
+    try {
+      const url = new URL(value);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch (error) {
+      return false;
+    }
   }
+
   function conform(){
     setError('')
-    // if(!value.trim()){
-    //     errorHandil('Bio is requred');
-    //     return
-    // }
+   
     if(value&&!isValidUrl(value) ){
       errorHandil('The Website link is not a valid URL format.');
       return
     }
 
-    setEditProfile(prev => ({ ...prev, website: value }))
+    setEditProfile(prev => {
+      if (prev !== null) {
+        return { ...prev, website: value };
+      }
+      return prev;
+    })
     setEdit(true)
   }
 
@@ -96,6 +96,8 @@ const Website: React.FC<UserBioProps> = ({ profile, setEditProfile }) => {
          <div onClick={editAccess} className=" hover:cursor-pointer ml-7 mt-4"> <Edit /></div>
 
          )}
+          <hr className="w-full border-t-2 border-3-color my-4" />
+
         </div>
   )
 }

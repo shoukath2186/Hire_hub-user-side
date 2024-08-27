@@ -3,7 +3,7 @@ import { ResponseType } from '../datatypes.ts/userRes';
 import { RequestDataType } from '../datatypes.ts/userReq';
 import { ErrorResponse } from '../datatypes.ts/userRes';
 import { User } from '../datatypes.ts/IUserData';
-import { useGoogleLogin } from '@react-oauth/google';
+// import { useGoogleLogin } from '@react-oauth/google';
 
 
 interface RequestOtpDataType{

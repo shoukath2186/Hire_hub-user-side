@@ -2,8 +2,12 @@
 
  import image from '../assets/about_image-2.png'
  import DisplayJob from './Home/HomePage/DisplayJob';
+ import { useNavigate } from 'react-router-dom';
 
 const Home: React.FC = () => {
+
+  const navigate=useNavigate()
+
   return (
     <>
     <div className='w-full bg-blue-50 flex flex-col md:flex-row items-center justify-center p-5'>
@@ -26,8 +30,8 @@ const Home: React.FC = () => {
     </ul>
 
       <div className='flex items-center justify-center'>
-         <button className='bg-blue-800 text-white w-1/2 py-2 px-4 rounded hover:bg-blue-700 transition'>Find Your Job</button>
-         <button className='m-4 text-blue-800 hover:text-blue-600 transition'>Update Your Profile</button>
+         <button onClick={()=>navigate('/job')} className='bg-blue-800 text-white w-1/2 py-2 px-4 rounded hover:bg-blue-700 transition'>Find Your Job</button>
+         <button onClick={()=>navigate('/profile')}  className='m-4 text-blue-800 hover:text-blue-600 transition'>Update Your Profile</button>
        </div>
      </div>
   </div>
