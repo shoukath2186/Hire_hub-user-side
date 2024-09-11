@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { FaBars, FaTimes, FaUserPlus } from 'react-icons/fa';
 import { IoMdLogIn } from "react-icons/io";
 import { MdOutlineMessage } from 'react-icons/md';
-import {  useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { AuthState } from '../datatypes.ts/IUserData';
 
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import NavLink from './NavbarElemets/NavLink';
 import UserMenu from './NavbarElemets/UserMenu';
 import UserIcon from './NavbarElemets/UserIcon';
+import { useChatState } from '../chatHandle/ChatContextApi/ContextApi';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -16,29 +17,38 @@ const Navbar: React.FC = () => {
   const { userInfo } = useSelector((state: AuthState | any) => state.auth);
   const [activeItem, setActiveItem] = useState<string>('HOME');
 
+  const { notification } = useChatState();
+
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(()=>{
+  useEffect(() => {
 
     const pathSegments = location.pathname.split('/').filter(Boolean);
-   
 
-    if (pathSegments[pathSegments.length - 1] === 'job') {
-      setActiveItem('JOBS');
-    }else if(pathSegments[pathSegments.length - 1] === ''){
-      setActiveItem('HOME')
-    }else if(pathSegments[pathSegments.length - 1] === 'about'){
-      setActiveItem('ABOUT')
-    }else if(pathSegments[pathSegments.length - 1] === 'contact'){
-      setActiveItem('CONTACT')
+    if (pathSegments.length === 0) {
+      // Root path
+      setActiveItem('HOME');
+    } else {
+      const lastSegment = pathSegments[pathSegments.length - 1];
+
+      if (lastSegment === 'job') {
+        setActiveItem('JOBS');
+      } else if (lastSegment === 'about') {
+        setActiveItem('ABOUT');
+      } else if (lastSegment === 'contact') {
+        setActiveItem('CONTACT');
+      } else {
+        setActiveItem('');
+      }
     }
-    
-  },[location.search])
+
+  }, [location.pathname.split('/').filter(Boolean)])
   //'POST',
-  const navItems: string[] = ['HOME',  'JOBS', 'ABOUT', 'CONTACT'];
+  const navItems: string[] = ['HOME', 'JOBS', 'ABOUT', 'CONTACT', ''];
 
   const toggleDropdown = () => setIsOpenMenu(prevState => !prevState);
+
   const toggleMobileMenu = () => setIsOpen(!isOpen);
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -59,33 +69,45 @@ const Navbar: React.FC = () => {
     setActiveItem(item);
     if (item === 'HOME') {
       navigate('/');
-    }else if(item==='JOBS'){
+    } else if (item === 'JOBS') {
       navigate('/job')
-    }else if(item==='ABOUT'){
+    } else if (item === 'ABOUT') {
       navigate('/about')
-    }else if(item==='CONTACT'){
+    } else if (item === 'CONTACT') {
       navigate('/contact')
     }
-  } 
+  }
 
   return (
     <nav className="sticky z-10 top-0 w-full bg-white shadow-lg border-b-2 border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <h1 className="text-blue-600 font-bold text-3xl">Hire<span className="text-yellow-600">Hub</span></h1>
+          <h1 onClick={() => navigate('/')} className="text-blue-600 font-bold text-3xl cursor-pointer">Hire<span className="text-yellow-600">Hub</span></h1>
           <div className="hidden md:block">
             <ul className="flex space-x-6">
               {navItems.map((item) => (
                 <NavLink key={item} item={item} active={activeItem} onItemClick={handilNavbar} />
               ))}
             </ul>
-          </div> 
+          </div>
           {userInfo ? (
             <div className="hidden md:flex items-center space-x-6">
-              <MdOutlineMessage className="text-blue-600 cursor-pointer hover:text-yellow-600 transition duration-300 ease-in-out" size={28} />
+              <div className="relative">
+                <MdOutlineMessage
+                  className="text-blue-600 cursor-pointer hover:text-yellow-600 transition duration-300 ease-in-out"
+                  size={28}
+                  onClick={() => navigate('/chat')} 
+                />
+                {notification.length > 0 && (
+                  <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {notification.length > 99 ? '99+' : notification.length} 
+                  </div> 
+                )}
+              </div>
+
               <div className="flex items-center space-x-1">
                 <UserIcon userInfo={userInfo} />
-                <UserMenu userInfo={userInfo}  isOpenMenu={isOpenMenu} toggleDropdown={toggleDropdown} />
+                <UserMenu userInfo={userInfo} isOpenMenu={isOpenMenu} toggleDropdown={toggleDropdown} />
               </div>
             </div>
           ) : (
@@ -118,7 +140,8 @@ const Navbar: React.FC = () => {
             <div className="flex items-center justify-between px-5">
               {userInfo ? (
                 <>
-                  <MdOutlineMessage className="text-blue-600 cursor-pointer hover:text-yellow-600 transition duration-300 ease-in-out" size={28} />
+                  <MdOutlineMessage className="text-blue-600 cursor-pointer hover:text-yellow-600 transition duration-300 ease-in-out" size={28}
+                    onClick={() => navigate('/chat')} />
                   <div className="flex items-center space-x-2">
                     <UserIcon userInfo={userInfo} />
                     <UserMenu mobile userInfo={userInfo} isOpenMenu={isOpenMenu} toggleDropdown={toggleDropdown} />

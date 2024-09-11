@@ -8,13 +8,13 @@ interface JobCardProps {
 
 
 function JobCard({ job }: JobCardProps) {
-
+ 
   const navigate=useNavigate()
 
   const ApplayJob=(details:Job)=>{
        
      navigate('/jobDetails', { state: { jobDetails: details } });
-     console.log(details);
+     //console.log(details);
      
   
   }

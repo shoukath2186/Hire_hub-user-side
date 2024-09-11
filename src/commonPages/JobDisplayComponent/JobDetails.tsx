@@ -39,7 +39,8 @@ function JobDetails() {
     if (!jobDetails) {
       navigate('/job');
     }
-
+    console.log(1010,jobDetails);
+    
     axiosInstance.get(`/job/checkApplicationExists?Id=${job?._id}`).then((res) => {
 
       setApplied(true)

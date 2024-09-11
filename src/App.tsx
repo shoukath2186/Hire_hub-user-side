@@ -13,6 +13,7 @@ import Job from './commonPages/job.tsx';
 import About from './commonPages/about.tsx';
 import Contact from './commonPages/contact.tsx';
 import JobDisplay from './commonPages/jobDisplay.tsx';
+import Chat from './chatHandle/Chat.tsx';
 
 import LayoutProfile from './commonPages/Layout/layoutProfile.tsx';
 
@@ -23,6 +24,7 @@ import AuthRedirect from './components/AuthRedirect.tsx';
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { googleId } from './googleConfig.ts';
+import ChatProvider from './chatHandle/ChatContextApi/ContextApi';
 
 function App() {
   return (
@@ -31,9 +33,11 @@ function App() {
       <GoogleOAuthProvider clientId={googleId}>
         <Router>
           <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <Navbar />
+            
 
             <main style={{ flex: 1 }}>
+              <ChatProvider>
+              <Navbar />
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<AuthRedirect><Login /></AuthRedirect>} />
@@ -46,9 +50,10 @@ function App() {
                 <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
                 <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
                 <Route path="/jobDetails" element={<ProtectedRoute><JobDisplay /></ProtectedRoute>} />
-
+                <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
+              </ChatProvider>
             </main>
 
             <Footer />
