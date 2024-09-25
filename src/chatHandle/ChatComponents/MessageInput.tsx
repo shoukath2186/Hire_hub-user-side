@@ -8,15 +8,19 @@ import { MessageType } from "../../datatypes.ts/IChatType";
 import AudioModal from "../ChatModal/AudioRecordModal";
 import FilelTakeModel from "../ChatModal/FilelTakeModel";
 import { Socket } from "socket.io-client";
+import { AxiosError } from "axios";
+import { toast } from 'react-toastify';
 
 interface MessageInputProps {
     setMessage: (message: MessageType[]) => void;
     message: MessageType[];
     socket: Socket;
     socketConnected: boolean
+    NewMessage:boolean
+    setNewMessage:(NewMessage:boolean)=>void
 }
 
-const MessageInput: React.FC<MessageInputProps> = ({ setMessage, message, socket, socketConnected }) => {
+const MessageInput: React.FC<MessageInputProps> = ({ setMessage, message, socket, socketConnected,NewMessage,setNewMessage }) => {
 
     const [inputValue, setInputValue] = useState('');
     const [typingTimeout, setTypingTimeout] = useState<any >(null);
@@ -43,11 +47,20 @@ const MessageInput: React.FC<MessageInputProps> = ({ setMessage, message, socket
             const { data } = await axiosInstance.post('/chat/message', { value: inputValue, chatId: selectChat?._id })
             // console.log('new message:', data);
             setMessage([...message, data])
+            setNewMessage(!NewMessage);
             socket.emit("new message", data);
             setInputValue('')  
 
         } catch (error) {
-            console.log(error);
+            if (error instanceof AxiosError) {
+                setInputValue('')  
+                if (error.response) {
+                    toast.error(error.response.data || 'An error occurred.');
+                } else {
+                   
+                    toast.error('Something went wrong. Please try again.');
+                }
+            }
 
         }
     }
@@ -99,7 +112,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ setMessage, message, socket
 
 
             <button className="text-gray-400 hover:text-gray-600 p-2 focus:outline-none">
-                <FilelTakeModel setMessage={setMessage} message={message} socket={socket} />
+                <FilelTakeModel setMessage={setMessage} message={message} socket={socket} NewMessage={NewMessage} setNewMessage={setNewMessage}/>
             </button>
             <input
                 type="text"
@@ -110,7 +123,8 @@ const MessageInput: React.FC<MessageInputProps> = ({ setMessage, message, socket
                 onChange={userTyping}
             />
             <button className="text-blue-500 hover:text-blue-600 focus:outline-none p-2">
-                {inputValue ? (<IoSend size={20} onClick={saveMassage} />) : (<AudioModal setMessage={setMessage} message={message} socket={socket} />)}
+                {inputValue ? (<IoSend size={20} onClick={saveMassage} />) : 
+                (<AudioModal setMessage={setMessage} message={message} socket={socket} NewMessage={NewMessage} setNewMessage={setNewMessage} />)}
             </button>
         </div>
     )

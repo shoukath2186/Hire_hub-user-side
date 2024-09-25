@@ -16,6 +16,8 @@ export interface FormData {
     confirmPassword?: string;
   }
 
+  
+
   export interface UserType {
     _id: string ;
     user_name: string;

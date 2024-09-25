@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { Chat } from '../../datatypes.ts/IChatType';
+import { createContext, useContext, useState, ReactNode } from 'react';
+import { Chat,Notification } from '../../datatypes.ts/IChatType';
 
 
 interface ChatContextType {
@@ -7,33 +7,22 @@ interface ChatContextType {
   setSelectChat: (chat: Chat | null) => void;
 
   chats: Chat[] ;
-  setChats: (chats: Chat[] ) => void;
+  setChats: (chats: Chat[] ) => void; 
 
 
   notification: Notification[];
-  setNotificationHandil: (notifications: Notification[]) => void;
+  setNotification: (notifications: Notification[]) => void;
 
   isTyping:boolean;
   setIsTyping:(typoing:boolean)=>void;
 
   typing:boolean;
-  setTyping:(typoing:boolean)=>void
+  setTyping:(typoing:boolean)=>void;
+
+  resetUser:boolean,
+  setResetUser:(typoing:boolean)=>void;
 }
 
-
-
-interface Message {
-  id: string;
-  sender?: string;
-  content: string;
-  timestamp: Date;
-}
-
-interface Notification {
-  id: string;
-  message: Message;
-  isRead: boolean;
-}
 
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -50,20 +39,20 @@ const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   const [chats, setChats] = useState<Chat[] >([]);
 
   const [notification, setNotification] = useState<Notification[]>([]);
+
   const [isTyping, setIsTyping] = useState<boolean>(false);
+  
   const [typing, setTyping] = useState<boolean>(false);
 
+  const [resetUser,setResetUser]=useState(false)
 
-  const setNotificationHandil=(notif:Notification[])=>{
-      setNotification(notif)
-      console.log(1234,notification,1111,notif);
-  
-  } 
+
+ 
 
  
 
   return (
-    <ChatContext.Provider value={{ selectChat, setSelectChat, chats, setChats, notification, setNotificationHandil, isTyping , setIsTyping,typing, setTyping }}>
+    <ChatContext.Provider value={{ selectChat, setSelectChat, chats, setChats, notification, setNotification, isTyping , setIsTyping,typing, setTyping,resetUser,setResetUser }}>
       {children}
     </ChatContext.Provider>
   );

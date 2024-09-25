@@ -1,15 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FaBars, FaTimes, FaUserPlus } from 'react-icons/fa';
 import { IoMdLogIn } from "react-icons/io";
-import { MdOutlineMessage } from 'react-icons/md';
 import { useSelector } from 'react-redux';
 import { AuthState } from '../datatypes.ts/IUserData';
+
 
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import NavLink from './NavbarElemets/NavLink';
 import UserMenu from './NavbarElemets/UserMenu';
 import UserIcon from './NavbarElemets/UserIcon';
-import { useChatState } from '../chatHandle/ChatContextApi/ContextApi';
+import MessageDropdown from './NavbarElemets/MessageDropdown';
+import Calling from './NavbarElemets/Calling';
+
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -17,7 +19,9 @@ const Navbar: React.FC = () => {
   const { userInfo } = useSelector((state: AuthState | any) => state.auth);
   const [activeItem, setActiveItem] = useState<string>('HOME');
 
-  const { notification } = useChatState();
+
+  const menuRef = useRef<HTMLDivElement>(null);
+
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -27,7 +31,7 @@ const Navbar: React.FC = () => {
     const pathSegments = location.pathname.split('/').filter(Boolean);
 
     if (pathSegments.length === 0) {
-      // Root path
+
       setActiveItem('HOME');
     } else {
       const lastSegment = pathSegments[pathSegments.length - 1];
@@ -56,6 +60,10 @@ const Navbar: React.FC = () => {
     if (!target.closest('.dropdown-menu')) {
       setIsOpenMenu(false);
     }
+    if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      setIsOpen(false);
+    }
+
   };
 
   useEffect(() => {
@@ -76,9 +84,15 @@ const Navbar: React.FC = () => {
     } else if (item === 'CONTACT') {
       navigate('/contact')
     }
+    setIsOpen(false);
   }
 
+ 
+
+  
+
   return (
+
     <nav className="sticky z-10 top-0 w-full bg-white shadow-lg border-b-2 border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -92,22 +106,12 @@ const Navbar: React.FC = () => {
           </div>
           {userInfo ? (
             <div className="hidden md:flex items-center space-x-6">
-              <div className="relative">
-                <MdOutlineMessage
-                  className="text-blue-600 cursor-pointer hover:text-yellow-600 transition duration-300 ease-in-out"
-                  size={28}
-                  onClick={() => navigate('/chat')} 
-                />
-                {notification.length > 0 && (
-                  <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                    {notification.length > 99 ? '99+' : notification.length} 
-                  </div> 
-                )}
-              </div>
+              <Calling />
+              <MessageDropdown />
 
               <div className="flex items-center space-x-1">
                 <UserIcon userInfo={userInfo} />
-                <UserMenu userInfo={userInfo} isOpenMenu={isOpenMenu} toggleDropdown={toggleDropdown} />
+                <UserMenu setIsOpen={setIsOpen} userInfo={userInfo} isOpenMenu={isOpenMenu} toggleDropdown={toggleDropdown} />
               </div>
             </div>
           ) : (
@@ -120,17 +124,23 @@ const Navbar: React.FC = () => {
               </Link>
             </div>
           )}
-          <button
-            onClick={toggleMobileMenu}
-            className="md:hidden text-blue-600 hover:text-yellow-600 focus:outline-none transition duration-300 ease-in-out"
-            aria-label="Toggle menu"
-          >
-            {isOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
-          </button>
+          <div className="flex md:hidden items-center space-x-6">
+            <Calling />
+
+            <MessageDropdown />
+            <button
+              onClick={toggleMobileMenu}
+              className=" text-blue-600 hover:text-yellow-600 focus:outline-none transition duration-300 ease-in-out"
+              aria-label="Toggle menu"
+            >
+              {isOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+            </button>
+          </div>
+
         </div>
       </div>
       {isOpen && (
-        <div className="md:hidden bg-white">
+        <div className="md:hidden bg-white" ref={menuRef} >
           <ul className="px-2 pt-2 pb-3 space-y-1">
             {navItems.map((item) => (
               <NavLink key={item} item={item} mobile active={activeItem} onItemClick={handilNavbar} />
@@ -140,11 +150,9 @@ const Navbar: React.FC = () => {
             <div className="flex items-center justify-between px-5">
               {userInfo ? (
                 <>
-                  <MdOutlineMessage className="text-blue-600 cursor-pointer hover:text-yellow-600 transition duration-300 ease-in-out" size={28}
-                    onClick={() => navigate('/chat')} />
                   <div className="flex items-center space-x-2">
                     <UserIcon userInfo={userInfo} />
-                    <UserMenu mobile userInfo={userInfo} isOpenMenu={isOpenMenu} toggleDropdown={toggleDropdown} />
+                    <UserMenu setIsOpen={setIsOpen} mobile userInfo={userInfo} isOpenMenu={isOpenMenu} toggleDropdown={toggleDropdown} />
                   </div>
                 </>
               ) : (

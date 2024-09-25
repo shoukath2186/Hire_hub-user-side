@@ -57,14 +57,17 @@ const PreviewContainer = styled(Box)(({ theme }) => ({
 
 import { MessageType } from '../../datatypes.ts/IChatType';
 import { Socket } from 'socket.io-client';
+import { AxiosError } from 'axios';
 
 interface MessageInputProps {
   setMessage: (message: MessageType[]) => void;
   message: MessageType[];
   socket:Socket
+  NewMessage:boolean
+  setNewMessage:(NewMessage:boolean)=>void
 }
 
-const FileTakeModel: React.FC<MessageInputProps> = ({ setMessage, message,socket }) => {
+const FileTakeModel: React.FC<MessageInputProps> = ({ setMessage, message,socket,NewMessage,setNewMessage }) => {
     const [open, setOpen] = useState(false);
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
@@ -104,19 +107,27 @@ const FileTakeModel: React.FC<MessageInputProps> = ({ setMessage, message,socket
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }});
-
+                    setFile(null)
                     setMessage([...message, data]);
                     socket.emit("new message", data);
                     socket.emit('join chat', selectChat?._id);
-                    
+                    setNewMessage(!NewMessage)
                    setLoading(false)
                    toast.success('File uploaded successfully.');
                   
                 
             } catch (error) {
-                console.log(error);
-                toast.error('Failed to send the file. Please try again later.')
-                setLoading(false)
+                setFile(null)
+
+                if (error instanceof AxiosError) {
+                    if (error.response) {
+                        toast.error(error.response.data || 'An error occurred.');
+                    } else {
+                       
+                        toast.error('Failed to send the file. Please try again later.')
+                    }
+                }
+               
                 
             }
 

@@ -11,10 +11,11 @@ interface UserMenuProps {
   userInfo: any;
   isOpenMenu: boolean;
   toggleDropdown: () => void; 
+  setIsOpen:(isOpen:boolean)=>void;
   mobile?: boolean;
 }
 
-const UserMenu: React.FC<UserMenuProps> = ({ userInfo, isOpenMenu, toggleDropdown, mobile }) =>{ 
+const UserMenu: React.FC<UserMenuProps> = ({ userInfo, isOpenMenu, toggleDropdown,setIsOpen, mobile }) =>{ 
 
   const [open, setOpen] = useState<boolean>(false);
   const [modalHeading, setModalHeading] = useState<string>("");
@@ -36,6 +37,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ userInfo, isOpenMenu, toggleDropdow
     try {
       await logoutServer({ userId: userInfo._id }).unwrap();
       dispatch(logout());
+      
     } catch (error) {
       console.log(error);
     }
@@ -49,15 +51,18 @@ const UserMenu: React.FC<UserMenuProps> = ({ userInfo, isOpenMenu, toggleDropdow
       setModalHeading('Logout Confirmation');
       setModalMessage('Are you sure you want to log out?')
       handleOpen();
+      
     } else if (click === 'Profile') {
 
       navigate('/profile');
-
+      setIsOpen(false)
     } else if (click === 'Create new Job') {
       setOpenJob(true);
       
     }
+     
   } 
+
   const handleCloseJob = () => {
     setOpenJob(false);
   };

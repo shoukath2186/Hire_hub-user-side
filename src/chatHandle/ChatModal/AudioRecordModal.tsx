@@ -2,21 +2,24 @@ import { useState, useRef, useEffect } from 'react';
 import { Modal, Box } from '@mui/material';
 import { AiFillAudio, AiFillPlayCircle, AiFillPauseCircle } from "react-icons/ai";
 import { BsFillStopFill, BsMicFill } from "react-icons/bs";
-import { axiosInstance } from '../../commonPages/Modal/APIforaxios'; 
-import {useChatState} from '../ChatContextApi/ContextApi'
+import { axiosInstance } from '../../commonPages/Modal/APIforaxios';
+import { useChatState } from '../ChatContextApi/ContextApi'
 import { MessageType } from '../../datatypes.ts/IChatType';
-import {toast} from 'react-toastify'
+import { toast } from 'react-toastify'
 import { Socket } from 'socket.io-client';
+import { AxiosError } from 'axios';
 
 
 interface MessageInputProps {
   setMessage: (message: MessageType[]) => void;
   message: MessageType[];
-  socket:Socket
+  socket: Socket
+  NewMessage: boolean
+  setNewMessage: (NewMessage: boolean) => void
 }
 
 
-const  AudioRecordModal: React.FC<MessageInputProps> = ({ setMessage, message,socket }) => {
+const AudioRecordModal: React.FC<MessageInputProps> = ({ setMessage, message, socket, NewMessage, setNewMessage }) => {
   const [open, setOpen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [audioURL, setAudioURL] = useState<string | null>(null);
@@ -30,7 +33,7 @@ const  AudioRecordModal: React.FC<MessageInputProps> = ({ setMessage, message,so
 
   const handleOpen = () => setOpen(true);
 
-   const handleClose =async () => {
+  const handleClose = async () => {
     setOpen(false);
     if (recorderRef.current && isRecording) {
       recorderRef.current.stop();
@@ -90,7 +93,7 @@ const  AudioRecordModal: React.FC<MessageInputProps> = ({ setMessage, message,so
     }
   }, [audioURL]);
 
-   const {selectChat}=useChatState()
+  const { selectChat } = useChatState()
   const sendAudio = async () => {
     if (!audioFile) {
       console.error("No audio file to send.");
@@ -100,29 +103,41 @@ const  AudioRecordModal: React.FC<MessageInputProps> = ({ setMessage, message,so
 
     try {
       handleClose();
-      const {data}=await axiosInstance.post('/chat/saveFile',{file:audioFile,chatId:selectChat?._id},{
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            }});
+      const { data } = await axiosInstance.post('/chat/saveFile', { file: audioFile, chatId: selectChat?._id }, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      });
+      setAudioFile(null)
+      setNewMessage(!NewMessage)
       setMessage([...message, data])
       socket.emit("new message", data);
       setLoading(false);
       toast.success('Audio uploaded successfully.');
-      
+
     } catch (error) {
-      toast.error('Failed to send the audio. Please try again later.')
-      console.error("Error sending audio file:", error);
-      setLoading(false);
-      
+      setAudioFile(null)
+
+      if (error instanceof AxiosError) {
+        if (error.response) {
+            toast.error(error.response.data || 'An error occurred.');
+        } else {
+           
+          toast.error('Failed to send the audio. Please try again later.')
+        }
+    }
+    
+     
+
     }
   };
 
   return (
     <div>
-        <div onClick={handleOpen}>
-        <AiFillAudio size={24}  />
-        </div>
-      
+      <div onClick={handleOpen}>
+        <AiFillAudio size={24} />
+      </div>
+
       <Modal
         open={open}
         onClose={handleClose}
@@ -163,16 +178,16 @@ const  AudioRecordModal: React.FC<MessageInputProps> = ({ setMessage, message,so
               </div>
               <div className="flex justify-end">
 
-                {isRecording?(<></>):(
-                     <button
-                     className={`p-2 px-4 rounded-xl mx-3 bg-red-300`}
-                     onClick={handleClose}
-                    
-                   >
-                     Cancel
-                   </button>
+                {isRecording ? (<></>) : (
+                  <button
+                    className={`p-2 px-4 rounded-xl mx-3 bg-red-300`}
+                    onClick={handleClose}
+
+                  >
+                    Cancel
+                  </button>
                 )}
-               
+
 
                 <button
                   className={`p-2 px-4 rounded-xl ${loading ? 'bg-gray-300' : 'bg-blue-200'}`}
@@ -189,4 +204,4 @@ const  AudioRecordModal: React.FC<MessageInputProps> = ({ setMessage, message,so
     </div>
   );
 }
-export default  AudioRecordModal
+export default AudioRecordModal

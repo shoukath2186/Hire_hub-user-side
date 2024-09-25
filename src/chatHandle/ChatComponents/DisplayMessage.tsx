@@ -7,94 +7,83 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { MessageType } from "../../datatypes.ts/IChatType";
 import { useSelector } from "react-redux";
 import { AuthState } from "../../datatypes.ts/IUserData";
-import MessageAlination from "../Config/MessageAlienation";
-import io,{Socket} from 'socket.io-client';
-const ENDPOINT = 'http://localhost:3000';
-
-let socket: Socket; 
-let selectChatCompare: any; 
+import MessageAlination from "../Config/MessageAlienation"; 
+import { SockerContext } from "../../socketProvider/Socket";
+import { toast } from "react-toastify";
 
 
 function DisplayMessage() {
 
     const [loading, setLoading] = useState<boolean>(false);
     const [message, setMessage] = useState<MessageType[]>([]);
+    const [isdelete,setIsdelete] = useState<boolean>(false);
+    const [NewMessage,setNewMessage]=useState<boolean>(false)
 
-    const [socketConnected, setSocketConnected] = useState<boolean>(false);
+    
+    const {socketConnected,socket,checkNotif,setCheckNotif}=SockerContext();
 
     const { userInfo } = useSelector((state: AuthState | any) => state.auth);
 
-    const { selectChat,notification,setNotificationHandil,setIsTyping } = useChatState();
+    const { selectChat,setIsTyping,resetUser,setResetUser } = useChatState();
 
-    const scrollRef = useRef<HTMLDivElement | null>(null);
+    const scrollRef = useRef<HTMLDivElement | null>(null)
 
-     
-
-   
-    
     useEffect(()=>{
-        socket=io(ENDPOINT);
-        socket.emit('setup',userInfo);
-        socket.on('connected', () => {
-        setSocketConnected(true)});
         socket.on('typing', () => setIsTyping(true));
         socket.on('stop typing', () => setIsTyping(false));
       },[])
 
      
-      
-
-     
-    
-
     const takeUserMessage = async () => {
         try {
             const { data } = await axiosInstance.get(`/chat/message/${selectChat?._id}`);
-
-            //  socket.emit("new message", data);
-
              socket.emit('join chat', selectChat?._id);
-
+            setNewMessage(!NewMessage)
             setMessage(data)
             setLoading(false)
-
         } catch (error) {
             setLoading(false)
-
             console.log(error);
-
         }
     }
-
-
+   useEffect(()=>{ setLoading(true)},[selectChat])
 
     useEffect(() => {
-        setLoading(true)
-
+       
         takeUserMessage()
-        selectChatCompare=selectChat;
-
-    }, [selectChat])
+    }, [selectChat,isdelete])
 
 
+
+    const removeUserData=()=>{
+        axiosInstance.delete(`/chat/removeNotification?chatId=${selectChat?._id}`).then(({data})=>{
+            setCheckNotif(!checkNotif)
+            console.log(data);
+        })
+    }
+    useEffect(()=>{
+        removeUserData()
+    },[selectChat,message])
     
 
 
     useEffect(()=>{
         socket.on('message receved',(newMessageReceived)=>{
            
-          if(!selectChatCompare||selectChatCompare._id!==newMessageReceived.chat._id){
-            if(!notification.includes(newMessageReceived)){
-
-              setNotificationHandil([newMessageReceived, ...notification]);
-             
- 
-             }
-          }else{
-            setMessage([...message,newMessageReceived])
-           
-            
+          if(selectChat&&selectChat._id==newMessageReceived.chat._id){
+            setMessage([...message,newMessageReceived]); 
+            setResetUser(!resetUser);
           }
+        })
+        socket.on('delete data',(data:any)=>{
+            if(selectChat&&data.chatId==selectChat?._id&&userInfo._id!==data._id){
+                toast.error(`Message deleted ${data.user_name}`);
+                setIsdelete(!isdelete)
+            }
+            
+        })
+        return(()=>{
+            socket.off('delete data')
         })
     })
 
@@ -102,7 +91,7 @@ function DisplayMessage() {
         if (scrollRef.current) {
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
           }
-      }, [message]);
+      }, [NewMessage,selectChat]);
 
     return (
         <div className=" h-full w-full flex flex-col justify-between">
@@ -129,6 +118,7 @@ function DisplayMessage() {
                                     nextMessage={message[i+1]?message[i+1]:undefined}
                                     prevMessage={message[i-1]?message[i-1]:undefined}
                                     isOwnMessage={msg.sender._id === userInfo._id}
+                                    isdelete={isdelete} setIsdelete={setIsdelete}
                                 />
                             ))
                             : (<>
@@ -140,7 +130,9 @@ function DisplayMessage() {
                 </>
             )}
             <div>
-                <MessageInput setMessage={setMessage} message={message} socket={socket} socketConnected={socketConnected}/>
+                <MessageInput setMessage={setMessage} message={message} socket={socket} socketConnected={socketConnected}
+                NewMessage={NewMessage} setNewMessage={setNewMessage}
+                />
             </div>
         </div>
     )

@@ -1,8 +1,14 @@
 
 
+import { useState } from "react";
 import { MessageType } from "../../datatypes.ts/IChatType";
 import { sameUser } from "./DisplayMessageLogi";
 import { sameData } from "./DisplayMessageLogi";
+import { MdDelete } from "react-icons/md";
+import CustomModal from "../../commonPages/Modal/LogoutModal";
+import { toast } from "react-toastify";
+import { axiosInstance } from "../../commonPages/Modal/APIforaxios";
+import { SockerContext } from "../../socketProvider/Socket";
 
 
 interface ChatMessageProps {
@@ -10,11 +16,22 @@ interface ChatMessageProps {
   isOwnMessage: boolean,
   nextMessage: MessageType | undefined,
   prevMessage: MessageType | undefined,
+  setIsdelete:(isdelete:boolean)=>void,
+  isdelete:boolean
 }
 
 
-const MessageAlination: React.FC<ChatMessageProps> = ({ message, isOwnMessage, nextMessage, prevMessage }) => {
+const MessageAlination: React.FC<ChatMessageProps> = ({ message, isOwnMessage, nextMessage, prevMessage,isdelete,setIsdelete }) => {
 
+  const [open, setOpen] = useState<boolean>(false);
+  const [modalHeading, setModalHeading] = useState<string>("");
+  const [modalMessage, setModalMessage] = useState<string>("");
+
+  const [selectMessageData,setSelectMessageData]= useState<MessageType>()
+  const {socket}=SockerContext();
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
 
   const LocalTime = (value: any) => {
@@ -42,9 +59,33 @@ const MessageAlination: React.FC<ChatMessageProps> = ({ message, isOwnMessage, n
     return `${year}-${month}-${day}`;
   };
 
+  const handleModal = async () => {
+    if(selectMessageData){
+      
+       axiosInstance.put(`/chat/delete`,selectMessageData).then(({data})=>{
+        socket.emit('delete Messsage',{users:selectMessageData.chat.users,...data,chatId:selectMessageData.chat._id});
+        handleClose()
+        setIsdelete(!isdelete)
+       }) 
+    }else{
+      toast.error('no selected chat.')
+      handleClose()
+    }
 
-  return (
+
+  }
+
+  function onMessageDelete(messageData:MessageType){
+      setSelectMessageData(messageData);
+       handleOpen();
+       setModalHeading('Confirm Deletion');
+       setModalMessage(`Are you sure you want to delete this message?`);
+  }
+
+
+  return ( 
     <>
+    <CustomModal open={open}  handleClose={handleClose} handleModal={handleModal} title={modalHeading} message={modalMessage} />
       {sameData({ message, prevMessage }) ? (<>
         <div className="flex  justify-center">
           <p className="bg-yellow-100 p-1 border-2 mt-1 rounded-lg">
@@ -65,7 +106,20 @@ const MessageAlination: React.FC<ChatMessageProps> = ({ message, isOwnMessage, n
 
         </>)}
         <div className={`px-3  m-1 rounded-2xl mx-2  ${isOwnMessage ? 'bg-blue-200' : 'bg-gray-200'} `}>
-          <p className="font-semibold text-[13px]">{message.sender.user_name}</p>
+          <div className="flex justify-between">
+            <p className="font-semibold text-[13px]">{message.sender.user_name}</p>
+            <button
+              onClick={()=>onMessageDelete(message)}
+              className="group relative p-1 rounded-full  transition-colors duration-200"
+              aria-label="Delete message"
+            >
+              <MdDelete className="text-gray-400 group-hover:text-red-500 transition-colors duration-200" size={15} />
+              <span className="absolute hidden group-hover:block bg-gray-800 text-white text-xs py-1 px-2 rounded-md -top-8 -left-1/2 transform -translate-x-1/2">
+                Delete
+              </span>
+            </button>
+          </div>
+
           {message.contentType == 'text' ? (<>
             <p>{message.content}</p>
 
@@ -77,10 +131,10 @@ const MessageAlination: React.FC<ChatMessageProps> = ({ message, isOwnMessage, n
                   className="w-full"
                   controls
                 >
-                 
+
                 </audio>
               </div>
-              
+
             </>) : (<>
               {message.contentType == 'video' ? (<>
 
@@ -89,7 +143,7 @@ const MessageAlination: React.FC<ChatMessageProps> = ({ message, isOwnMessage, n
                     src={message.content}
                     className="w-full  object-cover"
                     controls
-                    
+
                   />
                 </div>
               </>) : (<>

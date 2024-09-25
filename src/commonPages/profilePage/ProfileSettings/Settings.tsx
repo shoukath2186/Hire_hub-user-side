@@ -71,6 +71,12 @@ const ProfileEdit: React.FC = () => {
       setLoading(false)
       setIsEditing(false);
       setShowConfirmation(false);
+      
+      console.log('previes data',userInfo);
+      
+      console.log('updated dtata',res.data);
+      
+
       dispatch(setCredentials(res.data));
       toast.success('Update successful!');
       setUser(res.data)

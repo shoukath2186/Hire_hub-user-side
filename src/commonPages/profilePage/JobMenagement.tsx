@@ -48,7 +48,7 @@ const EmployerApplications: React.FC = () => {
     const viewProfileFunction = async (id: string) => {
         try {
             const response = await axiosInstance.get(`/job/applicantProfile?id=${id}`);
-            console.log(12212,response.data);
+            //console.log(12212,response.data); 
             
             setSelectedProfile(response.data);
             setIsModalOpen(true);

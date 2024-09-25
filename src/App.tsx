@@ -25,6 +25,8 @@ import AuthRedirect from './components/AuthRedirect.tsx';
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { googleId } from './googleConfig.ts';
 import ChatProvider from './chatHandle/ChatContextApi/ContextApi';
+import SocketProvider from './socketProvider/Socket.tsx';
+import VideoCallHandling from './videoCall/VideoCallHandling.tsx';
 
 function App() {
   return (
@@ -33,27 +35,34 @@ function App() {
       <GoogleOAuthProvider clientId={googleId}>
         <Router>
           <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            
+
 
             <main style={{ flex: 1 }}>
               <ChatProvider>
-              <Navbar />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<AuthRedirect><Login /></AuthRedirect>} />
-                <Route path="/register" element={<AuthRedirect><Register /></AuthRedirect>} />
-                <Route path="/otp-verification" element={<AuthRedirect><OTPRegisterForm /></AuthRedirect>} />
-                <Route path="/forget-password" element={<AuthRedirect><ForgotPassword /></AuthRedirect>} />
-                <Route path="/reset-password" element={<AuthRedirect><ResetPassword /></AuthRedirect>} />
-                <Route path="/profile" element={<ProtectedRoute><LayoutProfile /></ProtectedRoute>} />
-                <Route path="/job" element={<ProtectedRoute><Job /></ProtectedRoute>} />
-                <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
-                <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
-                <Route path="/jobDetails" element={<ProtectedRoute><JobDisplay /></ProtectedRoute>} />
-                <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
+                <SocketProvider>
+
+
+                  <Navbar />
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/login" element={<AuthRedirect><Login /></AuthRedirect>} />
+                    <Route path="/register" element={<AuthRedirect><Register /></AuthRedirect>} />
+                    <Route path="/otp-verification" element={<AuthRedirect><OTPRegisterForm /></AuthRedirect>} />
+                    <Route path="/forget-password" element={<AuthRedirect><ForgotPassword /></AuthRedirect>} />
+                    <Route path="/reset-password" element={<AuthRedirect><ResetPassword /></AuthRedirect>} />
+                    <Route path="/profile" element={<ProtectedRoute><LayoutProfile /></ProtectedRoute>} />
+                    <Route path="/job" element={<ProtectedRoute><Job /></ProtectedRoute>} />
+                    <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
+                    <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
+                    <Route path="/jobDetails" element={<ProtectedRoute><JobDisplay /></ProtectedRoute>} />
+                    <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+                    <Route path="/videoCall" element={<ProtectedRoute><VideoCallHandling/></ProtectedRoute>} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </SocketProvider>
+
               </ChatProvider>
+
             </main>
 
             <Footer />

@@ -151,9 +151,14 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ userProfile, isModa
 
                     <Grid item xs={12}>
                         <Typography variant="h6" gutterBottom sx={{ color: '#007bff' }}>Resume</Typography>
-                        <Button variant="contained" color="primary" component="a" href={userProfile.resume as string} target="_blank" download>
-                            Download Resume
-                        </Button>
+                        {userProfile.resume?(
+                             <Button variant="contained" color="primary" component="a" href={userProfile.resume as string} target="_blank" download>
+                             Download Resume
+                         </Button>
+                        ):(
+                           <p>No Resume</p> 
+                        )}
+                       
                     </Grid>
                 </Grid>
 
