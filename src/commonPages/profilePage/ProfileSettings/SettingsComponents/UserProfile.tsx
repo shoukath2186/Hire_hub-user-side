@@ -12,9 +12,9 @@ const UserProfile: React.FC<UserProps> = ({ setUser }) => {
     const [src, setSrc] = useState<string | null>(null);
     const [crop, setCrop] = useState<Crop>();
     const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
-    const [image, setImage] = useState<HTMLImageElement | null>(null);
+    
     const [modalOpen, setModalOpen] = useState<boolean>(false);
-    const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
+    
     const fileInputRef = useRef<HTMLInputElement>(null);
     const imgRef = useRef<HTMLImageElement>(null);
 
@@ -45,7 +45,7 @@ const UserProfile: React.FC<UserProps> = ({ setUser }) => {
             height
         );
         setCrop(crop);
-        setImage(e.currentTarget);
+      
     };
 
     const getCroppedImg = useCallback((image: HTMLImageElement, crop: PixelCrop): Promise<Blob> => {
@@ -89,9 +89,7 @@ const UserProfile: React.FC<UserProps> = ({ setUser }) => {
         if (imgRef.current && completedCrop) {
             try {
                 const croppedImageBlob = await getCroppedImg(imgRef.current, completedCrop);
-                const croppedImageUrl = URL.createObjectURL(croppedImageBlob);
-                
-                setCroppedImageUrl(croppedImageUrl);
+               
                 
                 const file = new File([croppedImageBlob], 'cropped_profile_picture.png', { type: 'image/png' });
                 setUser(prev => ({ ...prev, profilePicture: file }));

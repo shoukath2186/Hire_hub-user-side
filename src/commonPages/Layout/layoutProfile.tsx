@@ -4,14 +4,14 @@ import { RootState } from '../../store';
 //LocalActivity, 
 import { 
   AccountCircle, ManageAccounts, Work, 
-  Lock, ExitToApp, CreateNewFolder, Handyman, Menu ,Dashboard as dash
+  Lock, ExitToApp, CreateNewFolder, Handyman, Menu 
 } from '@mui/icons-material';
 
 import Profile from '../profilePage/profile';
 import CreateJob from '../profilePage/Create_job';
 import MyJob from '../profilePage/My_job';//
 //import Dashboard from '../profilePage/dashboard';
-import SecuritySettings from '../profilePage/settings'; 
+import SecuritySettings from '../profilePage/settings';
 //import RecentActivity from '../profilePage/activity';
 import ManageListings from '../profilePage/JobMenagement';//
 import EditProfile from '../profilePage/editProfile';
