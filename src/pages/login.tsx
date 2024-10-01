@@ -1,5 +1,5 @@
 import { useState, FormEvent } from 'react';
-import { Box, Button, TextField, Typography, Container, Link, IconButton, Modal } from '@mui/material';
+import { Box, Button, TextField, Typography, Container, IconButton, Modal } from '@mui/material';
 import { FaGoogle } from "react-icons/fa";
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
@@ -110,7 +110,7 @@ function Login(): JSX.Element {
   const handleGoogleLogin = useGoogleLogin({
 
     onSuccess: (codeResponse: any) => {
-      
+
       googleData(codeResponse)
 
     },
@@ -190,7 +190,7 @@ function Login(): JSX.Element {
               sx={{
                 bgcolor: '#3f51b5',
                 color: 'white',
-                '&:hover': { bgcolor: '#303f9f' }, 
+                '&:hover': { bgcolor: '#303f9f' },
               }}
             >
               Verify
@@ -286,9 +286,10 @@ function Login(): JSX.Element {
             </Box>
             {/* {errors.email && <Alert severity="error" sx={{ mb: 2, width: '100%' }}>{errors.email}</Alert>}
             {errors.password && <Alert severity="error" sx={{ mb: 2, width: '100%' }}>{errors.password}</Alert>} */}
-            <Link href="/forget-password" sx={{ alignSelf: 'flex-end', mb: 3, color: '#1b2a6b' }}>
+            
+            <span className='text-blue-700 hover:cursor-pointer' onClick={()=>navigate('/forget-password')}>
               <Typography variant="body2">Forgot Password?</Typography>
-            </Link>
+            </span>
             {isVerifying || isVerifyingoogle ? (
               <Button
                 fullWidth
@@ -322,9 +323,12 @@ function Login(): JSX.Element {
 
             <Typography variant="body2" sx={{ mb: 3 }}>
               Don't have an account?{' '}
-              <Link href="/register" sx={{ color: '#1b2a6b', fontWeight: 'bold' }}>
+              <span
+                className="text-blue-600 hover:cursor-pointer"
+                onClick={() => navigate('/register')}
+              >
                 Sign Up
-              </Link>
+              </span>
             </Typography>
             <Button
               fullWidth

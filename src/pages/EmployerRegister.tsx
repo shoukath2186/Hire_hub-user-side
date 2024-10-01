@@ -10,7 +10,7 @@ import { FormErrors } from '../datatypes.ts/IUserData';
 import { ErrorResponse } from '../datatypes.ts/userRes';
 
 
-import { Box, Button, Container, TextField, Typography, Grid, Paper, Link, useTheme, useMediaQuery, InputAdornment, IconButton, } from '@mui/material';
+import { Box, Button, Container, TextField, Typography, Grid, Paper, useTheme, useMediaQuery, InputAdornment, IconButton, } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 import { toast } from 'react-toastify';
@@ -261,14 +261,12 @@ const SeekerRegistrationForm: React.FC = () => {
             </Grid>
             <Typography sx={{ mt: 2 }} align='center'>
               I have alredy an {''}
-              <Link
-
-                href="/login"
-                color="primary"
-                sx={{ cursor: 'pointer', textDecoration: 'underline', }}
+              <span
+                onClick={()=>navigate('/login')}
+                className='text-blue-700 hover:cursor-pointer'
               >
                 Account.
-              </Link>
+              </span>
             </Typography>
             {isLoading ? (
               

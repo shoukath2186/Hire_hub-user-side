@@ -3,13 +3,16 @@ import { Container, TextField, Button, Typography, Box, CircularProgress, Link }
 import { toast } from "react-toastify";
 import {useForgotPasswordMutation} from '../slices/userApiSlice'
 import { ErrorResponseDisplay } from '../datatypes.ts/userRes';
+import { useNavigate } from 'react-router-dom';
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [emailError, setEmailError] = useState<string>('');
 
-  const [forgotPass,{isLoading}]=useForgotPasswordMutation()
+  const [forgotPass,{isLoading}]=useForgotPasswordMutation();
+
+  const navigate=useNavigate()
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -89,9 +92,9 @@ const ForgotPassword: React.FC = () => {
           </Box>
         </form>
         <Box mt={2} textAlign="center">
-          <Link href="/login" variant="body2">
+          <span className='text-blue-700 hover:cursor-pointer' onClick={()=>navigate('/login')}>
             Back to Login
-          </Link>
+          </span>
         </Box>
       </Box>
     </Container>
