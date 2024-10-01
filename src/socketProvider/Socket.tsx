@@ -21,7 +21,7 @@ interface SockerProvider{
     checkNotif:boolean,
     setCheckNotif:(checkNotif:boolean)=>void,
     setSocketConnected:(socket:boolean)=>void
-    socket:Socket;
+    socket:Socket|null;
     calling:CallingType|null,
     setCalling:(calling:CallingType|null)=>void
     
@@ -34,9 +34,9 @@ interface SocketProviderProps{
 }
 
 
-const ENDPOINT = 'http://localhost:3000';
+const ENDPOINT = 'https://newyourchoice.shop';
 
-let socket: Socket; 
+let socket: Socket | null = null;
 
 const SocketProvider:React.FC<SocketProviderProps>=({children})=>{
 
@@ -61,15 +61,17 @@ const SocketProvider:React.FC<SocketProviderProps>=({children})=>{
 
     useEffect(()=>{
       if(socketConnected){
-        socket.on('video-call-signal', async (data:CallingType) => {
+        socket?.on('video-call-signal', async (data:CallingType) => {
+          console.log('call signet',data);
+          
            setCalling(data);
         })
       }
-      socket.on('call-ended', ()=>{
+      socket?.on('call-ended', ()=>{
         setCalling(null)
       });
       return ()=>{
-        socket.off('video-call-signal');
+        socket?.off('video-call-signal');
       }
     })
 
@@ -83,9 +85,9 @@ const SocketProvider:React.FC<SocketProviderProps>=({children})=>{
         }
        
     }
-    socket.on('message receved',messageListener);
+    socket?.on('message receved',messageListener);
     return (()=>{
-      socket.off('message receved',messageListener)
+      socket?.off('message receved',messageListener)
     })
 
   }, [notification, selectChat, setNotification])

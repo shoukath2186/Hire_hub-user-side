@@ -11,7 +11,7 @@ function DisplayJob() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    axios.get('http://localhost:3000/job/homeJob').then((res) => {
+    axios.get('https://newyourchoice.shop/job/homeJob').then((res) => {
       setJob(res.data);
 
     }).catch((error) => {

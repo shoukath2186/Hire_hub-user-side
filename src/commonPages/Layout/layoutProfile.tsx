@@ -10,8 +10,8 @@ import {
 import Profile from '../profilePage/profile';
 import CreateJob from '../profilePage/Create_job';
 import MyJob from '../profilePage/My_job';//
-import Dashboard from '../profilePage/dashboard';
-import SecuritySettings from '../profilePage/settings';
+//import Dashboard from '../profilePage/dashboard';
+import SecuritySettings from '../profilePage/settings'; 
 //import RecentActivity from '../profilePage/activity';
 import ManageListings from '../profilePage/JobMenagement';//
 import EditProfile from '../profilePage/editProfile';
@@ -45,7 +45,7 @@ const DashboardLayout: React.FC = () => {
   ];
    const employerMenu: MenuItem[] = [
     { name: 'Profile', icon: AccountCircle, component: Profile },
-    { name: 'Employer Dashboard', icon: dash, component: Dashboard },
+    //{ name: 'Employer Dashboard', icon: dash, component: Dashboard },
     { name: 'Job Manage', icon: CreateNewFolder, component: CreateJob },
     { name: 'Manage Listings', icon: Handyman, component: ManageListings },
     //{ name: 'Recent Activity', icon: LocalActivity, component: RecentActivity },

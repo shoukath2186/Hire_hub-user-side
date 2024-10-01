@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useChatState } from "../../chatHandle/ChatContextApi/ContextApi";
 import { axiosInstance } from "../../commonPages/Modal/APIforaxios";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 
 const Calling:React.FC=()=> {
@@ -22,11 +23,13 @@ const Calling:React.FC=()=> {
         const { from, signal, user,userId,chatId } = calling; 
         
         axiosInstance.get(`/chat/getChatData?chatId=${chatId}`).then(({data})=>{
-
+          const videoCallUrl = `/videoCall?roomID=${signal}`;
+           console.log(videoCallUrl);
+           
             setSelectChat(data)
-            navigate(`/videoCall?creater=${false}`,{state:data});
+            navigate(videoCallUrl);
             setCalling(null);
-            socket.emit('accept-call', { rejecter: userInfo._id, from, signal, user,userId });
+            socket?.emit('accept-call', { rejecter: userInfo._id, from, signal, user,userId });
         }).catch((error)=>{
             toast.error(`Failed to retrieve chat data: ${error.response.data.message || 'Server error'}`);
             console.log(error);
@@ -35,21 +38,30 @@ const Calling:React.FC=()=> {
         
        }
     }
+    useEffect(()=>{autoEnd()},[calling])
+    
+    const autoEnd=()=>{
+      setTimeout(()=>{
+        setCalling(null)
+      },30000)
+    }
 
     const rejectCall=()=>{
+     
         if(socketConnected){
             if (calling) {
                 const { from, signal, user,userId } = calling; 
-                socket.emit('reject-call', { rejecter: userInfo._id, from, signal, user,userId });
+                socket?.emit('reject-call', { rejecter: userInfo._id, from, signal, user,userId });
               }
              setCalling(null)
         }
     }
 
     return (
-        <div className="relative">
+        <div className="absolute">
         {calling && (
-          <div className="absolute top-0 left-0 mt-10 mr-4 w-50 z-50">
+           <div className="absolute top-0 left-20 md:left-0 mt-10 mr-4 w-50 z-10">
+          {/* <div className="fixed sm:absolute top-0  sm:left-20 md:left-0 mt-10 mr-4 w-full sm:w-auto max-w-[300px] z-10"> */}
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-center">
               <div className="mb-6 text-white text-lg font-semibold">
                 Incoming Call...

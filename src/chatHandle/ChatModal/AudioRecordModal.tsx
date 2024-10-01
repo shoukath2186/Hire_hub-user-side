@@ -13,7 +13,7 @@ import { AxiosError } from 'axios';
 interface MessageInputProps {
   setMessage: (message: MessageType[]) => void;
   message: MessageType[];
-  socket: Socket
+  socket: Socket|null
   NewMessage: boolean
   setNewMessage: (NewMessage: boolean) => void
 }
@@ -111,7 +111,7 @@ const AudioRecordModal: React.FC<MessageInputProps> = ({ setMessage, message, so
       setAudioFile(null)
       setNewMessage(!NewMessage)
       setMessage([...message, data])
-      socket.emit("new message", data);
+      socket?.emit("new message", data);
       setLoading(false);
       toast.success('Audio uploaded successfully.');
 

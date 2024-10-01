@@ -29,15 +29,15 @@ function DisplayMessage() {
     const scrollRef = useRef<HTMLDivElement | null>(null)
 
     useEffect(()=>{
-        socket.on('typing', () => setIsTyping(true));
-        socket.on('stop typing', () => setIsTyping(false));
+        socket?.on('typing', () => setIsTyping(true));
+        socket?.on('stop typing', () => setIsTyping(false));
       },[])
 
      
     const takeUserMessage = async () => {
         try {
             const { data } = await axiosInstance.get(`/chat/message/${selectChat?._id}`);
-             socket.emit('join chat', selectChat?._id);
+             socket?.emit('join chat', selectChat?._id);
             setNewMessage(!NewMessage)
             setMessage(data)
             setLoading(false)
@@ -68,14 +68,14 @@ function DisplayMessage() {
 
 
     useEffect(()=>{
-        socket.on('message receved',(newMessageReceived)=>{
+        socket?.on('message receved',(newMessageReceived)=>{
            
           if(selectChat&&selectChat._id==newMessageReceived.chat._id){
             setMessage([...message,newMessageReceived]); 
             setResetUser(!resetUser);
           }
         })
-        socket.on('delete data',(data:any)=>{
+        socket?.on('delete data',(data:any)=>{
             if(selectChat&&data.chatId==selectChat?._id&&userInfo._id!==data._id){
                 toast.error(`Message deleted ${data.user_name}`);
                 setIsdelete(!isdelete)
@@ -83,7 +83,7 @@ function DisplayMessage() {
             
         })
         return(()=>{
-            socket.off('delete data')
+            socket?.off('delete data')
         })
     })
 

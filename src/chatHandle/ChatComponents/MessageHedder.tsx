@@ -70,13 +70,13 @@ function MessageHedder() {
       })
     }
 
-    socket.on('online status', (data) => {
+    socket?.on('online status', (data) => {
       if (data.userId === takeUserData()?.users[0]._id) {
         setIsOnline(data.isOnline);
       }
     });
 
-    socket.on('user offline', (userId: string) => {
+    socket?.on('user offline', (userId: string) => {
       if (takeUserData()?.users[0]._id == userId) {
         setIsOnline(false)
       }
@@ -86,8 +86,8 @@ function MessageHedder() {
       const intervalId = setInterval(checkOnlineStatus, 30000);
 
     return () => {
-      socket.off('user online');
-      socket.off('user offline');
+      socket?.off('user online');
+      socket?.off('user offline');
       clearInterval(intervalId);
     }
   }, [socket, selectChat])

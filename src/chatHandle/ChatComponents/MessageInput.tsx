@@ -14,7 +14,7 @@ import { toast } from 'react-toastify';
 interface MessageInputProps {
     setMessage: (message: MessageType[]) => void;
     message: MessageType[];
-    socket: Socket;
+    socket: Socket|null;
     socketConnected: boolean
     NewMessage:boolean
     setNewMessage:(NewMessage:boolean)=>void
@@ -33,7 +33,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ setMessage, message, socket
 
     const saveMassage = async () => {
 
-        socket.emit("stop typing", selectChat?._id);
+        socket?.emit("stop typing", selectChat?._id);
         setTyping(false);
         setTyping(false);
 
@@ -48,7 +48,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ setMessage, message, socket
             // console.log('new message:', data);
             setMessage([...message, data])
             setNewMessage(!NewMessage);
-            socket.emit("new message", data);
+            socket?.emit("new message", data);
             setInputValue('')  
 
         } catch (error) {
@@ -79,7 +79,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ setMessage, message, socket
     
         if (!typing) {
             setTyping(true);
-            socket.emit("typing", selectChat?._id);
+            socket?.emit("typing", selectChat?._id);
         }
     
        
@@ -95,7 +95,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ setMessage, message, socket
                 let timeDiff = timeNow - lastTypingTime;
     
                 if (timeDiff >= typingDelay && typing) {
-                    socket.emit("stop typing", selectChat?._id);
+                    socket?.emit("stop typing", selectChat?._id);
                     setTyping(false);
                 }
             }, typingDelay)

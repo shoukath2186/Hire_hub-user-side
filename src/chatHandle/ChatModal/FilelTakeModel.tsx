@@ -62,7 +62,7 @@ import { AxiosError } from 'axios';
 interface MessageInputProps {
   setMessage: (message: MessageType[]) => void;
   message: MessageType[];
-  socket:Socket
+  socket:Socket|null
   NewMessage:boolean
   setNewMessage:(NewMessage:boolean)=>void
 }
@@ -109,8 +109,8 @@ const FileTakeModel: React.FC<MessageInputProps> = ({ setMessage, message,socket
                     }});
                     setFile(null)
                     setMessage([...message, data]);
-                    socket.emit("new message", data);
-                    socket.emit('join chat', selectChat?._id);
+                    socket?.emit("new message", data);
+                    socket?.emit('join chat', selectChat?._id);
                     setNewMessage(!NewMessage)
                    setLoading(false)
                    toast.success('File uploaded successfully.');

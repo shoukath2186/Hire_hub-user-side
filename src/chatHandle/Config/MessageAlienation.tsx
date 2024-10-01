@@ -16,19 +16,19 @@ interface ChatMessageProps {
   isOwnMessage: boolean,
   nextMessage: MessageType | undefined,
   prevMessage: MessageType | undefined,
-  setIsdelete:(isdelete:boolean)=>void,
-  isdelete:boolean
+  setIsdelete: (isdelete: boolean) => void,
+  isdelete: boolean
 }
 
 
-const MessageAlination: React.FC<ChatMessageProps> = ({ message, isOwnMessage, nextMessage, prevMessage,isdelete,setIsdelete }) => {
+const MessageAlination: React.FC<ChatMessageProps> = ({ message, isOwnMessage, nextMessage, prevMessage, isdelete, setIsdelete }) => {
 
   const [open, setOpen] = useState<boolean>(false);
   const [modalHeading, setModalHeading] = useState<string>("");
   const [modalMessage, setModalMessage] = useState<string>("");
 
-  const [selectMessageData,setSelectMessageData]= useState<MessageType>()
-  const {socket}=SockerContext();
+  const [selectMessageData, setSelectMessageData] = useState<MessageType>()
+  const { socket } = SockerContext();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -60,14 +60,14 @@ const MessageAlination: React.FC<ChatMessageProps> = ({ message, isOwnMessage, n
   };
 
   const handleModal = async () => {
-    if(selectMessageData){
-      
-       axiosInstance.put(`/chat/delete`,selectMessageData).then(({data})=>{
-        socket.emit('delete Messsage',{users:selectMessageData.chat.users,...data,chatId:selectMessageData.chat._id});
+    if (selectMessageData) {
+
+      axiosInstance.put(`/chat/delete`, selectMessageData).then(({ data }) => {
+        socket?.emit('delete Messsage', { users: selectMessageData.chat.users, ...data, chatId: selectMessageData.chat._id });
         handleClose()
         setIsdelete(!isdelete)
-       }) 
-    }else{
+      })
+    } else {
       toast.error('no selected chat.')
       handleClose()
     }
@@ -75,17 +75,22 @@ const MessageAlination: React.FC<ChatMessageProps> = ({ message, isOwnMessage, n
 
   }
 
-  function onMessageDelete(messageData:MessageType){
-      setSelectMessageData(messageData);
-       handleOpen();
-       setModalHeading('Confirm Deletion');
-       setModalMessage(`Are you sure you want to delete this message?`);
+  function onMessageDelete(messageData: MessageType) {
+    setSelectMessageData(messageData); 
+    handleOpen();
+    setModalHeading('Confirm Deletion');
+    setModalMessage(`Are you sure you want to delete this message?`);
   }
 
+  const isUrl = (str:string) => {
+    const urlPattern = /^(https?:\/\/)?(localhost)(:\d{1,5})(\/\S*)?(\?\S*)?$/;
+    return urlPattern.test(str);
+  };
 
-  return ( 
+
+  return (
     <>
-    <CustomModal open={open}  handleClose={handleClose} handleModal={handleModal} title={modalHeading} message={modalMessage} />
+      <CustomModal open={open} handleClose={handleClose} handleModal={handleModal} title={modalHeading} message={modalMessage} />
       {sameData({ message, prevMessage }) ? (<>
         <div className="flex  justify-center">
           <p className="bg-yellow-100 p-1 border-2 mt-1 rounded-lg">
@@ -109,7 +114,7 @@ const MessageAlination: React.FC<ChatMessageProps> = ({ message, isOwnMessage, n
           <div className="flex justify-between">
             <p className="font-semibold text-[13px]">{message.sender.user_name}</p>
             <button
-              onClick={()=>onMessageDelete(message)}
+              onClick={() => onMessageDelete(message)}
               className="group relative p-1 rounded-full  transition-colors duration-200"
               aria-label="Delete message"
             >
@@ -121,7 +126,20 @@ const MessageAlination: React.FC<ChatMessageProps> = ({ message, isOwnMessage, n
           </div>
 
           {message.contentType == 'text' ? (<>
-            <p>{message.content}</p>
+            {isUrl(message.content) ? (
+              <p>
+                <a
+                  href={message.content}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline"
+                >
+                  {message.content}
+                </a>
+              </p>
+            ) : (
+              <p>{message.content}</p>
+            )}
 
           </>) : (<>
             {message.contentType == 'audio' ? (<>
