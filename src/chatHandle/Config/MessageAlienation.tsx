@@ -143,14 +143,18 @@ const MessageAlination: React.FC<ChatMessageProps> = ({ message, isOwnMessage, n
 
           </>) : (<>
             {message.contentType == 'audio' ? (<>
-              <div className="relative w-[250px] p-2 border border-gray-300 rounded-lg bg-gray-100 flex items-center justify-center">
-                <audio
-                  src={message.content}
-                  className="w-full"
-                  controls
-                >
-
-                </audio>
+              <div className="relative w-[250px] p-2 border border-gray-300 rounded-lg bg-gray-100">
+                <div className="w-full ">
+                  <audio
+                    controls
+                    preload="metadata"
+                    className="w-full "
+                    style={{ minWidth: '200px', minHeight: '20px' }}
+                  >
+                    <source src={message.content} type="audio/mpeg" />
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
               </div>
 
             </>) : (<>
