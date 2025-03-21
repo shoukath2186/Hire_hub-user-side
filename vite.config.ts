@@ -8,7 +8,7 @@ export default defineConfig({
     port: 5000,
     proxy: { 
       '/api': { 
-        target: 'https://newyourchoice.shop',
+        target: 'https://hire-hub-server-eta.vercel.app',
         changeOrigin: true,
         secure: false
       }

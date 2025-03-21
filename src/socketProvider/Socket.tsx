@@ -34,7 +34,7 @@ interface SocketProviderProps{
 }
 
 
-const ENDPOINT = 'https://newyourchoice.shop';
+const ENDPOINT = 'https://hire-hub-server-eta.vercel.app';
 
 let socket: Socket | null = null;
 
