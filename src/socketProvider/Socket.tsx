@@ -34,7 +34,7 @@ interface SocketProviderProps{
 }
 
 
-const ENDPOINT = 'https://hire-hub-server-eta.vercel.app';
+const ENDPOINT = 'http://localhost:5000';
 
 let socket: Socket | null = null;
 
@@ -50,7 +50,7 @@ const SocketProvider:React.FC<SocketProviderProps>=({children})=>{
 
     const [calling,setCalling]=useState<CallingType|null>(null);
 
-    useEffect(()=>{  
+    useEffect(()=>{
       if(userInfo){
         socket=io(ENDPOINT);
         socket.emit('setup',userInfo);

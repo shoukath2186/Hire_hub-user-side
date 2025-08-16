@@ -4,7 +4,7 @@ import store from '../../store';
 import { toast } from 'react-toastify';
 
 export const axiosInstance = axios.create({
-  baseURL: 'https://hire-hub-server-eta.vercel.app',
+  baseURL: 'http://localhost:3000',
   withCredentials: true,
 }); 
 
